@@ -1,0 +1,42 @@
+* About
+
+[[file:resources/wumpus-world-problem.png]]
+
+The Wumpus World is a classic game in artificial intelligence. The game is played on a grid of squares, and the player controls an agent who is trying to find a treasure without being killed by a Wumpus or falling into a pit.
+
+** Game Description
+
+The agent can move in any of the four cardinal directions, and it can also shoot an arrow. The arrow can only be fired once, and it will kill the Wumpus if it hits it.
+
+The agent receives percepts from the environment, which tell it what it can see, smell, and hear. The agent can perceive the following:
+
+1. ~Stench~: The agent perceives a stench if it is in the same room as the Wumpus or in a room adjacent to the Wumpus.
+2. ~Breeze~: The agent perceives a breeze if it is in the same room as a pit or in a room adjacent to a pit.
+3. ~Glitter~: The agent perceives glitter if it is in the same room as the treasure.
+4. ~Bump~: The agent perceives a bump if it moves into a wall.
+5. ~Scream~: The agent perceives a scream if the Wumpus is killed.
+
+The goal of the game is to find the treasure and return to the start square with it, without being killed by the Wumpus or falling into a pit.
+
+** Additional rules
++ The agent cannot move diagonally.
++ The agent cannot shoot its arrow diagonally.
++ The Wumpus will not move until it is disturbed by the agent (e.g., by the agent moving into a room adjacent to the Wumpus or shooting an arrow at the Wumpus).
++ If the Wumpus is disturbed, it will move to a random adjacent room.
++ If the Wumpus is in the same room as the agent, the Wumpus will kill the agent.
+
+** Winning and losing
+
+The player wins the game if the agent is able to find the treasure and return to the start square with it, without being killed by the Wumpus or falling into a pit.
+
+The player loses the game if the agent is killed by the Wumpus or falls into a pit.
+
+* Strategies
+
+There are many different strategies that can be used to play Wumpus World. One common strategy is to start by exploring the grid of squares, while carefully paying attention to the percepts that the agent receives. For example, if the agent perceives a stench, it knows that the Wumpus is nearby. If the agent perceives a breeze, it knows that there is a pit nearby.
+
+The agent can use this information to avoid dangerous areas and to find the treasure. Once the agent has found the treasure, it needs to find a safe path back to the start square.
+
+Another common strategy is to use the agent's arrow to kill the Wumpus early in the game. This will make the game easier to win, but it is also riskier, because the agent only has one arrow.
+
+Wumpus World is a challenging game, but it is also a lot of fun. With careful planning and execution, the player can learn to win the game consistently.
