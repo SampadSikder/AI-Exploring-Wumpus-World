@@ -1,0 +1,6 @@
+
+* Basic GUI
+We have developed a basic gui for Wumpus world.
+- Yellow means Gold
+- Red means wumpus
+[[file:resources/basic-gui.png]]
