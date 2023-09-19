@@ -4,9 +4,16 @@ body {
 
 
 .square {
-    width: 50px;
+    width: 60px;
     height: 50px;
     border: 1px solid black;
+    padding: 2px;
+    margin: 2px;
+    text-align: center;
+}
+
+.agent {
+    background-color: blueviolet;
 }
 
 .wumpus {
@@ -16,17 +23,22 @@ body {
 .gold {
       background-color: yellow;
 }
+.pit {
+    background-color: rgb(126, 126, 123);
+}
+
+
 
 
 .grid-container {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    grid-template-rows: repeat(3, 1fr);
+    grid-template-columns: repeat(10, 1fr);
+    grid-template-rows: repeat(10, 1fr);
     gap: 2px;
     border: 1px solid black;
     margin: auto;
     margin-top: 5%;
     padding: 10px;
 
-    width: calc(3*60px)
+    width: calc(10*70px)
 }
