@@ -1,19 +1,22 @@
 const GOLD = {
     "piece": "G",
     "piece_name":"Gold",
-    "image": "./resources/wumpus/gold.gif"
+    "image": "./resources/wumpus/gold.gif",
+    "effect_name": "Shine"
 };
 
 const PIT = {
     "piece": "P",
     "piece_name":"Pit",
-    "image": "./resources/wumpus/pitc.gif"
+    "image": "./resources/wumpus/pitc.gif",
+    "effect_name": "Breeze"
 };
 
 const WUMPUS = {
     "piece": "W",
     "piece_name":"Wumpus",
-    "image": "./resources/wumpus/wumpusc.gif"
+    "image": "./resources/wumpus/wumpusc.gif",
+    "effect_name": "Stench"
 };
 
 const BREEZE = {
@@ -34,17 +37,18 @@ const EXPLORED_CELL = {
 const UNEXPLORED_CELL = {
     "piece": "C",
     "piece_name":"Unexplored",
-    "image": "./resources/wumpus/original_wall.gif"
+    "image": "./resources/floor_1.png"
 }
 const NORMAL_CELL = {
     "piece": "C",
     "piece_name":"Normal",
-    "image": "./resources/wumpus/original_wall.gif"
+    "image": "./resources/floor_1.png"
 };
 
 const AGENT = {
     "piece": "A",
-    "piece_name":"Agent"
+    "piece_name":"Agent",
+    "image": "./resources/player_facing_to_down.png"
 }
 
 let wumpusWorld = [];
@@ -90,53 +94,79 @@ function drawOriginalWorld() {
             const cellValue = wumpusWorld[i][j];
 	    
             const squareElement = document.createElement("img");
+            squareElement.id = `${i}-${j}`;
             squareElement.classList.add("square");
             
             squareElement.innerText = cellValue.piece_name;
 
             if (cellValue["piece_name"] == "Wumpus") {
 		        squareElement.setAttribute("src", WUMPUS.image);
+                squareElement.classList.add("wumpus");
             } else if (cellValue["piece_name"] === "Gold") {
                 squareElement.setAttribute("src", GOLD.image);
+                squareElement.classList.add("gold");
             } else if (cellValue["piece_name"] === "Pit") {
 		        squareElement.setAttribute("src", PIT.image);
-            } else if(cellValue["piece_name"]=="Normal"){
+                squareElement.classList.add("pit");
+            } else if(cellValue["piece_name"]=="Unexplored" || cellValue["piece_name"]=="Normal"){
                 squareElement.setAttribute("src", NORMAL_CELL.image);
-            }
+            } else if(cellValue["piece_name"]=="Agent"){
+                squareElement.setAttribute("src", AGENT.image);
+            } 
 	    
             gridElement.appendChild(squareElement);
         }
     }
 }
+
 
 function drawExploredWorld() {
     const gridElement = document.getElementById("grid");
-    
+    while (gridElement.firstChild) {
+        gridElement.removeChild(gridElement.firstChild);
+    }
+
+    drawOriginalWorld();
+
+    // Adding and Hiding stuffs for player
     for (let i = 0; i < wumpusWorld.length; i++) {
         for (let j = 0; j < wumpusWorld[i].length; j++) {
             const cellValue = wumpusWorld[i][j];
-	    
-            const squareElement = document.createElement("img");
-            squareElement.classList.add("square");
-            
-            squareElement.innerText = cellValue.piece_name;
-
-            if (cellValue["piece_name"] == "Wumpus") {
-		        squareElement.setAttribute("src", WUMPUS.image);
-            } else if (cellValue["piece_name"] === "Gold") {
-                squareElement.setAttribute("src", GOLD.image);
-            } else if (cellValue["piece_name"] === "Pit") {
-		        squareElement.setAttribute("src", PIT.image);
-            } else if(cellValue["piece_name"]=="Explored"){
-                squareElement.setAttribute("src", EXPLORED_CELL.image);
-            } else if(cellValue["piece_name"]=="Unexplored"){
-                squareElement.setAttribute("src", UNEXPLORED_CELL.image);
+            let cell = document.getElementById(`${i}-${j}`);
+	                
+            if(cellValue["piece_name"]=="Explored"){
+                cell.setAttribute("src", EXPLORED_CELL.image);
+            } else if(cellValue["piece_name"]!="Agent"){
+                cell.setAttribute("src", UNEXPLORED_CELL.image);
             }
-	    
-            gridElement.appendChild(squareElement);
         }
     }
 }
 
+function updateLog(moveNumber, content) {
+    const tableBody = document.querySelector("#moveTable tbody");
 
+    const newRow = document.createElement("tr");
 
+    const moveCell = document.createElement("td");
+    moveCell.textContent = moveNumber;
+    newRow.appendChild(moveCell);
+
+    const playerCell = document.createElement("td");
+    playerCell.textContent = content;
+    newRow.appendChild(playerCell);
+
+    tableBody.appendChild(newRow);
+}
+
+// Miscellaneous
+
+function handleNearbyCells(i,j, OBJECT){
+    if(i>0 && j>0 && i<exploredWorld.length && j<exploredWorld.length && exploredWorld[i][j]!=AGENT) {
+        let cell = document.getElementById(`${i}-${j}`);
+        cell.removeAttribute("src");
+        cell.innerText = OBJECT.effect_name;
+        return true;
+    }
+    return false;
+}

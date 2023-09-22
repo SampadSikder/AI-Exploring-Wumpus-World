@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Wumpus World</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="script.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="dropdown">
+    <button class="dropbtn">Select Game Mode</button>
+    <div class="dropdown-content">
+      <a href="#">Human Agent</a>
+      <a href="./for-ai/index.html">AI Agent</a>
+    </div>
+  </div>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-10">
+        <div id="grid" class="grid-container"></div>
+      </div>
+      <div class="col-sm-2">
+        <table id="moveTable" class="table table-light">
+                <thead class="thead-light">
+                  <tr>
+                      <th>Cell</th>
+                      <th>Content</th>
+                  </tr>
+              </thead>
+              <tbody>
+                  <!-- Rows will be dynamically added here -->
+              </tbody>
+          </table>
+      
+            </div>
+    </div>
+  </div>
+
+  <script>
+    generate_world();
+    //drawOriginalWorld();
+    drawExploredWorld();
+  </script>
+</body>
+</html>
