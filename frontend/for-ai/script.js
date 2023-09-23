@@ -55,6 +55,40 @@ const AGENT = {
 let wumpusWorld = [];
 let exploredWorld = [];
 
+function makeYourMoveAi(){
+    const requestData = {
+        board: [
+        [1, 0, 0],
+        [0, 0, 1],
+        [1, 1, 0]
+        ]
+    };
+  
+    const requestBody = JSON.stringify(requestData);
+    const url = 'http://localhost:8080/ai/explore';
+    const headers = {'Content-Type': 'application/json',};
+    
+    const fetchOptions = {
+        method: 'POST',
+        headers: headers,
+        body: requestBody,
+    };
+    
+    fetch(url, fetchOptions)
+        .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json(); 
+        })
+        .then(data => {
+        console.log('Response Data:', data);
+        })
+        .catch(error => {
+        console.error('Error:', error);
+        });
+}
+
 function generate_world() {
     for (let i = 0; i < 10; i++) {
         let row = [];
