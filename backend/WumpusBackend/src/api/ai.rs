@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 struct Cell {
     x: i32,
     y: i32,
-    perceived_environment:String,
+    perceived_environment:Vec<String>,
     arrows: i32
 }
 
@@ -18,6 +18,11 @@ pub async fn start_explore(
     cell: web::Json<Cell>
 ) -> HttpResponse {
     let cell_data = cell.into_inner();
-    println!("perceived_environment: {}", cell_data.perceived_environment);
+    let perceived_environment = &cell_data.perceived_environment;
+
+    
+    for item in perceived_environment {
+        println!("perceived_environment item: {}", item);
+    }
     HttpResponse::Ok().json(cell_data)
 }

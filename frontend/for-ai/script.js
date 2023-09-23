@@ -132,7 +132,7 @@ function wait_for_AI(cell, i, j) {
         body: JSON.stringify({
             x: i,
             y: j,
-            perceived_environment: cell[i][j].piece_name,
+            perceived_environment: [cell[i][j].piece_name],
             arrows: 1
         }),
     })
