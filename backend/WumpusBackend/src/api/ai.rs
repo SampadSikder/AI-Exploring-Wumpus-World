@@ -15,7 +15,6 @@ pub async fn start_explore(
     exploredWorld: web::Json<World>,
     wumpusWorld: web::Json<World>,
 ) -> HttpResponse {
-    // Access the explored world data
     let world_data = exploredWorld.into_inner();
     
     for row in &world_data.arrays {
