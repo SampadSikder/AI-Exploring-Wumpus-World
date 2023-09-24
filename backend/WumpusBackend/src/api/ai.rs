@@ -9,7 +9,7 @@ use super::logic::CellKnowledge;
 struct Cell {
     x: i32,
     y: i32,
-    perceived_environment:Vec<String>,
+    piece:String,
     arrows: u32
 }
 
@@ -30,15 +30,6 @@ pub async fn start_explore(
     cell: web::Json<Cell>
 ) -> HttpResponse {
     let cell_data = cell.into_inner();
-    let perceived_environment = &cell_data.perceived_environment;
-
-    // unsafe{
-    //     get_next_move(cell_data.x as usize, cell_data.y as usize, perceived_environment, &mut knowledge_base, cell_data.arrows);
-    // }
-
-    
-    for item in perceived_environment {
-        println!("perceived_environment item: {}", item);
-    }
+    println!("{:?}", cell_data.piece);
     HttpResponse::Ok().json(cell_data)
 }
