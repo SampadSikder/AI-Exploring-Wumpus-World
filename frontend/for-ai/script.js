@@ -82,7 +82,7 @@ function generate_world() {
             exploredWorld[i][j] = UNEXPLORED_CELL;
 
     wumpusWorld[0][0] = AGENT;
-    exploredWorld[0][0] = EXPLORED_CELL;
+    exploredWorld[0][0] = AGENT;
     console.log(wumpusWorld);
 }
 
@@ -98,16 +98,21 @@ function makeYourMoveAI() {
         body: JSON.stringify({
             x: agent_position.x,
             y: agent_position.y,
-            piece: 'a',
-            arrows: 1
+            piece: 'b', //TODO
+            arrows: 1 
         }),
     })
         .then((response) => response.json())
         .then((reply) => {
             console.log("AI has replied!");
             console.log(reply);
+
+            exploredWorld[agent_position.x][agent_position.y] = EXPLORED_CELL;
             agent_position.x = reply.x;
             agent_position.y = reply.y;
+            exploredWorld[agent_position.x][agent_position.y] = AGENT;
+
+            drawExploredWorld();
         })
         .catch((error) => {
             console.error("An error occurred:", error);
@@ -155,19 +160,26 @@ function drawExploredWorld() {
         gridElement.removeChild(gridElement.firstChild);
     }
 
-    drawOriginalWorld();
+    for (let i = 0; i < exploredWorld.length; i++) {
+        for (let j = 0; j < exploredWorld[i].length; j++) {
+            const cellValue = exploredWorld[i][j];
 
-    // Adding and Hiding stuffs for player
-    for (let i = 0; i < wumpusWorld.length; i++) {
-        for (let j = 0; j < wumpusWorld[i].length; j++) {
-            const cellValue = wumpusWorld[i][j];
-            let cell = document.getElementById(`${i}-${j}`);
+            const squareElement = document.createElement("img");
+            squareElement.id = `${i}-${j}`;
+            squareElement.classList.add("square");
+
+            squareElement.innerText = cellValue.piece_name;
 
             if (cellValue["piece_name"] == "Explored") {
-                cell.setAttribute("src", EXPLORED_CELL.image);
-            } else if (cellValue["piece_name"] != "Agent") {
-                cell.setAttribute("src", UNEXPLORED_CELL.image);
+                squareElement.setAttribute("src", EXPLORED_CELL.image);
+                squareElement.classList.add("wumpus");
+            } else if (cellValue["piece_name"] == "Unexplored" || cellValue["piece_name"] == "Normal") {
+                squareElement.setAttribute("src", NORMAL_CELL.image);
+            } else if (cellValue["piece_name"] == "Agent") {
+                squareElement.setAttribute("src", AGENT.image);
             }
+
+            gridElement.appendChild(squareElement);
         }
     }
 }
