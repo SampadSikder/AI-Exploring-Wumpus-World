@@ -47,11 +47,11 @@ pub async fn start_explore(
         perceived.push(*character);
     }
 
-    let mut result = load_knowledge_base(&String::from("kb.txt"));
+    let result = load_knowledge_base(&String::from("kb.txt"));
     match result {
         Ok(mut knowledge_base) => {
             let _move = get_next_move(cell_data.x, cell_data.y, &perceived, &mut knowledge_base, &mut cell_data.arrows);
-            save_knowledge_base(&String::from("kb.txt"),&knowledge_base);
+            let _ = save_knowledge_base(&String::from("kb.txt"),&knowledge_base);
 
             HttpResponse::Ok().json(Cell{
                 x: _move.0 as i32,
