@@ -59,24 +59,48 @@ const AGENT = {
 let wumpusWorld = [];
 let exploredWorld = [];
 let agent_position = {"x":0, "y":0};
+const WUMPUS_WORLD_SIZE = 10;
+
+const ENTITY_COUNT = {
+    "gold": 2,
+    "pit": 6,
+    "wumpus": 3
+}
 
 function generate_world() {
-    for (let i = 0; i < 10; i++) {
-        let row = [];
-        for (let j = 0; j < 10; j++) {
-            const randomValue = Math.random();
 
-            if (randomValue < 0.1) {
-                row.push(GOLD);
-            } else if (randomValue < 0.3) {
-                row.push(PIT);
-            } else if (randomValue < 0.4) {
-                row.push(WUMPUS);
-            } else {
-                row.push(NORMAL_CELL);
-            }
+    let entity_count = {
+        "gold": 0,
+        "pit": 0,
+        "wumput": 0
+    }
+
+    // Initializing
+    for (let i = 0; i < WUMPUS_WORLD_SIZE; i++) {
+        const row = [];
+        for (let j = 0; j < WUMPUS_WORLD_SIZE; j++) {
+          row.push(NORMAL_CELL); 
         }
         wumpusWorld.push(row);
+    }
+
+    // Generating World
+    for (let i = WUMPUS_WORLD_SIZE-1; i > 0; i--) {
+        for (let j = WUMPUS_WORLD_SIZE-1; j > 0; j--) {
+            const randomValue = Math.random();
+            if (randomValue < 0.1 && entity_count.gold <= ENTITY_COUNT.gold) {
+                wumpusWorld[i][j] = GOLD ;
+                entity_count.gold+=1;
+            } else if (randomValue < 0.3 && entity_count.pit <= ENTITY_COUNT.pit) {
+                wumpusWorld[i][j] = PIT ;
+                entity_count.pit +=1 ;
+            } else if (randomValue < 0.4 && entity_count.wumput <= ENTITY_COUNT.wumpus) {
+                wumpusWorld[i][j] = WUMPUS ;
+                entity_count.wumput += 1;
+            } else {
+                wumpusWorld[i][j] = NORMAL_CELL ;
+            }
+        }
     }
 
     exploredWorld = JSON.parse(JSON.stringify(wumpusWorld));
