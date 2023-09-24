@@ -115,9 +115,9 @@ fn exclude_death_paths(x: i32, y: i32, knowledge_base: &mut Vec<Vec<CellKnowledg
 
     // ERROR , CHECK x-1 >0
 
-    if knowledge_base[x-1][y].countBreezeSensedNearby < 2 && knowledge_base[x-1][y].countStenchSensedNearby < 2 {less_dangerous_paths.push((x-1,y));}
+    if x!=0 && knowledge_base[x-1][y].countBreezeSensedNearby < 2 && knowledge_base[x-1][y].countStenchSensedNearby < 2 {less_dangerous_paths.push((x-1,y));}
     else if knowledge_base[x+1][y].countBreezeSensedNearby < 2 && knowledge_base[x+1][y].countStenchSensedNearby < 2 {less_dangerous_paths.push((x+1,y));}
-    else if knowledge_base[x][y-1].countBreezeSensedNearby < 2 && knowledge_base[x][y-1].countStenchSensedNearby < 2 {less_dangerous_paths.push((x,y-1));}
+    else if y!=0 && knowledge_base[x][y-1].countBreezeSensedNearby < 2 && knowledge_base[x][y-1].countStenchSensedNearby < 2 {less_dangerous_paths.push((x,y-1));}
     else if knowledge_base[x][y+1].countBreezeSensedNearby < 2 && knowledge_base[x][y+1].countStenchSensedNearby < 2 {less_dangerous_paths.push((x,y+1));}
 
     return less_dangerous_paths;

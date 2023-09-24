@@ -3,21 +3,24 @@ const GOLD = {
     "piece": "G",
     "piece_name": "Gold",
     "image": "./resources/wumpus/gold.gif",
-    "effect_name": "Shine"
+    "effect_name": "Glitter",
+    "effect": "g"
 };
 
 const PIT = {
     "piece": "P",
     "piece_name": "Pit",
     "image": "./resources/wumpus/pitc.gif",
-    "effect_name": "Breeze"
+    "effect_name": "Breeze",
+    "effect": "b"
 };
 
 const WUMPUS = {
     "piece": "W",
     "piece_name": "Wumpus",
     "image": "./resources/wumpus/wumpusc.gif",
-    "effect_name": "Stench"
+    "effect_name": "Stench",
+    "effect": "s"
 };
 
 const BREEZE = {
@@ -43,7 +46,8 @@ const UNEXPLORED_CELL = {
 const NORMAL_CELL = {
     "piece": "C",
     "piece_name": "Normal",
-    "image": "./resources/floor_1.png"
+    "image": "./resources/floor_1.png",
+    "effect": "n"
 };
 
 const AGENT = {
@@ -85,40 +89,6 @@ function generate_world() {
     exploredWorld[0][0] = AGENT;
     console.log(wumpusWorld);
 }
-
-function makeYourMoveAI() {
-    console.log("Wait for move");
-    console.log(agent_position);
-
-    fetch(URL, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            x: agent_position.x,
-            y: agent_position.y,
-            piece: 'b', //TODO
-            arrows: 1 
-        }),
-    })
-        .then((response) => response.json())
-        .then((reply) => {
-            console.log("AI has replied!");
-            console.log(reply);
-
-            exploredWorld[agent_position.x][agent_position.y] = EXPLORED_CELL;
-            agent_position.x = reply.x;
-            agent_position.y = reply.y;
-            exploredWorld[agent_position.x][agent_position.y] = AGENT;
-
-            drawExploredWorld();
-        })
-        .catch((error) => {
-            console.error("An error occurred:", error);
-        });
-}
-
 
 function drawOriginalWorld() {
     const gridElement = document.getElementById("grid");
@@ -184,6 +154,72 @@ function drawExploredWorld() {
     }
 }
 
+
+function makeYourMoveAI() {
+    console.log("Wait for move");
+    console.log(agent_position);
+
+    fetch(URL, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+            x: agent_position.x,
+            y: agent_position.y,
+            piece: getPercepts(agent_position.x,agent_position.y),
+            arrows: 1 
+        }),
+    })
+        .then((response) => response.json())
+        .then((reply) => {
+            console.log("AI has replied!");
+            console.log(reply);
+
+            exploredWorld[agent_position.x][agent_position.y] = EXPLORED_CELL;
+            agent_position.x = reply.x;
+            agent_position.y = reply.y;
+            exploredWorld[agent_position.x][agent_position.y] = AGENT;
+
+            drawExploredWorld();
+        })
+        .catch((error) => {
+            console.error("An error occurred:", error);
+        });
+}
+
+// Miscellaneous
+
+function handleNearbyCells(i, j, OBJECT) {
+    if (i > 0 && j > 0 && i < exploredWorld.length && j < exploredWorld.length && exploredWorld[i][j] != AGENT) {
+        let cell = document.getElementById(`${i}-${j}`);
+        cell.removeAttribute("src");
+        cell.innerText = OBJECT.effect_name;
+        return true;
+    }
+    return false;
+}
+
+function getPerceptAt(x,y){
+    if(x<0 || y<0 || x>wumpusWorld.length || y>wumpusWorld.length) return null;
+
+    if(wumpusWorld[x][y]==PIT) return PIT.effect;
+    if(wumpusWorld[x][y]==WUMPUS) return WUMPUS.effect;
+    if(wumpusWorld[x][y]==GOLD) return GOLD.effect;
+    return NORMAL_CELL.effect;
+}
+
+function getPercepts(x,y){
+    percepts = "";
+    if(getPerceptAt(x-1,y)) percepts+=getPerceptAt(x-1,y);
+    if(getPerceptAt(x+1,y)) percepts+=getPerceptAt(x+1,y);
+    if(getPerceptAt(x,y-1)) percepts+=getPerceptAt(x,y-1);
+    if(getPerceptAt(x,y+1)) percepts+=getPerceptAt(x,y+1);
+
+    return percepts;
+}
+
+
 function updateLog(moveNumber, content) {
     const tableBody = document.querySelector("#moveTable tbody");
 
@@ -198,16 +234,4 @@ function updateLog(moveNumber, content) {
     newRow.appendChild(playerCell);
 
     tableBody.appendChild(newRow);
-}
-
-// Miscellaneous
-
-function handleNearbyCells(i, j, OBJECT) {
-    if (i > 0 && j > 0 && i < exploredWorld.length && j < exploredWorld.length && exploredWorld[i][j] != AGENT) {
-        let cell = document.getElementById(`${i}-${j}`);
-        cell.removeAttribute("src");
-        cell.innerText = OBJECT.effect_name;
-        return true;
-    }
-    return false;
 }
