@@ -54,40 +54,7 @@ const AGENT = {
 
 let wumpusWorld = [];
 let exploredWorld = [];
-
-function makeYourMoveAi() {
-    const requestData = {
-        board: [
-            [1, 0, 0],
-            [0, 0, 1],
-            [1, 1, 0]
-        ]
-    };
-
-    const requestBody = JSON.stringify(requestData);
-    const url = 'http://localhost:8080/ai/explore';
-    const headers = { 'Content-Type': 'application/json', };
-
-    const fetchOptions = {
-        method: 'POST',
-        headers: headers,
-        body: requestBody,
-    };
-
-    fetch(url, fetchOptions)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(data => {
-            console.log('Response Data:', data);
-        })
-        .catch(error => {
-            console.error('Error:', error);
-        });
-}
+let agent_position = {"x":0, "y":0};
 
 function generate_world() {
     for (let i = 0; i < 10; i++) {
@@ -116,13 +83,12 @@ function generate_world() {
 
     wumpusWorld[0][0] = AGENT;
     exploredWorld[0][0] = EXPLORED_CELL;
-    wait_for_AI(exploredWorld, 0, 0);
     console.log(wumpusWorld);
 }
 
-function wait_for_AI(cell, i, j) {
+function makeYourMoveAI() {
     console.log("Wait for move");
-    console.log(cell);
+    console.log(agent_position);
 
     fetch(URL, {
         method: "POST",
@@ -130,8 +96,8 @@ function wait_for_AI(cell, i, j) {
             "Content-Type": "application/json",
         },
         body: JSON.stringify({
-            x: i,
-            y: j,
+            x: agent_position.x,
+            y: agent_position.y,
             piece: 'a',
             arrows: 1
         }),
@@ -139,6 +105,9 @@ function wait_for_AI(cell, i, j) {
         .then((response) => response.json())
         .then((reply) => {
             console.log("AI has replied!");
+            console.log(reply);
+            agent_position.x = reply.x;
+            agent_position.y = reply.y;
         })
         .catch((error) => {
             console.error("An error occurred:", error);
