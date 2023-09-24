@@ -51,6 +51,7 @@ pub async fn start_explore(
     match result {
         Ok(mut knowledge_base) => {
             let _move = get_next_move(cell_data.x, cell_data.y, &perceived, &mut knowledge_base, &mut cell_data.arrows);
+            save_knowledge_base(&String::from("kb.txt"),&knowledge_base);
 
             HttpResponse::Ok().json(Cell{
                 x: _move.0 as i32,
