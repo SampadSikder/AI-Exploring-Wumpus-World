@@ -1,6 +1,6 @@
 mod api;
 
-use api::ai::start_explore;
+use api::ai::{start_explore, initialize};
 use actix_web::{HttpServer, App, middleware::Logger, http::header};
 use actix_cors::Cors;
 
@@ -21,6 +21,7 @@ async fn main() -> std::io::Result<()> {
             .wrap(cors)
             .wrap(logger)
             .service(start_explore)
+            .service(initialize)
     })
     .bind(("127.0.0.1", 8080))?
     .run()

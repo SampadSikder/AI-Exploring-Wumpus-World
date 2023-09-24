@@ -12,6 +12,7 @@ dependencies = [
  "http",
  "log",
  "serde",
+ "serde_json",
  "strum",
  "strum_macros",
  "uuid",
