@@ -91,7 +91,7 @@ function generate_world() {
 }
 
 function drawOriginalWorld() {
-    const gridElement = document.getElementById("grid");
+    const gridElement = document.getElementById("original-world");
 
     for (let i = 0; i < wumpusWorld.length; i++) {
         for (let j = 0; j < wumpusWorld[i].length; j++) {
