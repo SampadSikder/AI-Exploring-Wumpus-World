@@ -9,7 +9,7 @@ use super::logic::CellKnowledge;
 struct Cell {
     x: i32,
     y: i32,
-    perceived_environment:Vec<u8>,
+    perceived_environment:Vec<String>,
     arrows: u32
 }
 
@@ -32,9 +32,9 @@ pub async fn start_explore(
     let cell_data = cell.into_inner();
     let perceived_environment = &cell_data.perceived_environment;
 
-    unsafe{
-        get_next_move(cell_data.x as usize, cell_data.y as usize, perceived_environment, &mut knowledge_base, cell_data.arrows);
-    }
+    // unsafe{
+    //     get_next_move(cell_data.x as usize, cell_data.y as usize, perceived_environment, &mut knowledge_base, cell_data.arrows);
+    // }
 
     
     for item in perceived_environment {
