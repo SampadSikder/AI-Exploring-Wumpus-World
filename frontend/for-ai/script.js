@@ -225,7 +225,7 @@ function handleNearbyCells(i, j, OBJECT) {
 }
 
 function getPerceptAt(x,y){
-    if(x<0 || y<0 || x>wumpusWorld.length || y>wumpusWorld.length) return null;
+    if(x<0 || y<0 || x>=wumpusWorld.length || y>=wumpusWorld.length) return null;
 
     if(wumpusWorld[x][y]==PIT) return PIT.effect;
     if(wumpusWorld[x][y]==WUMPUS) return WUMPUS.effect;
