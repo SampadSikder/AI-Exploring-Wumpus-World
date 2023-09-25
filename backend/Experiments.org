@@ -8,8 +8,10 @@
 - [X] Use standard 4X4 board
 - [X] Think on effect of n
 ** Algorithm
-- [ ] Loop Detectuib
-- [ ] Decrease KB
+- [ ] Loop Detection
+- [ ] Better Probablistic Choice
+- [X] Decrease KB
+- [X] Try in 10X10
 * Progress
 The following figure proves that we have implemented the effects properly and the glitter bug does not exist.
 [[file:.doc-contents/frontend_effects.png]]

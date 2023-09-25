@@ -4,7 +4,7 @@ const BREEZE : char = 'b';
 const STENCH : char = 's';
 const GLITTER : char = 'g';
 
-const WUMPUS_WORLD_SIZE : i32 = 4;
+const WUMPUS_WORLD_SIZE : i32 = 10;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CellKnowledge {
