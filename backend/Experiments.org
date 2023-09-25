@@ -3,4 +3,8 @@
 1. Glitter bug in frontend
 * TODO
 - [ ] Frontend effects
-- [ ] Use standard 4X4 board
+- [ ] Glitter Bug
+- [X] Use standard 4X4 board
+** Algorithm
+- [ ] Loop Detectuib
+- [ ] Decrease KB
