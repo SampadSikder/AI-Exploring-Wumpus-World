@@ -206,6 +206,23 @@ function makeYourMoveAI() {
             agent_position.y = reply.y;
             exploredWorld[agent_position.x][agent_position.y] = AGENT;
 
+            let message = "";
+            if(wumpusWorld[agent_position.x][agent_position.y]==GOLD) {
+                message = "You have gained gold!";
+                wumpusWorld[agent_position.x][agent_position.y] = NORMAL_CELL;
+            }else if(wumpusWorld[agent_position.x][agent_position.y]==WUMPUS && reply.arrows < arrows) {
+                message = "You have shot an arrow to wumpus and killed it!";
+                wumpusWorld[agent_position.x][agent_position.y] = NORMAL_CELL;
+            } else if(wumpusWorld[agent_position.x][agent_position.y]==WUMPUS) {
+                message = "You have been killed by wumpus! GAME OVER.";
+                wumpusWorld[agent_position.x][agent_position.y] = NORMAL_CELL;
+            } else if(wumpusWorld[agent_position.x][agent_position.y]==PIT) {
+                message = "You have dropped into PIT! GAME OVER.";
+                wumpusWorld[agent_position.x][agent_position.y] = NORMAL_CELL;
+            }
+
+            document.getElementById("game-message").innerText = "Message: "+message;
+
             drawExploredWorld();
         })
         .catch((error) => {
