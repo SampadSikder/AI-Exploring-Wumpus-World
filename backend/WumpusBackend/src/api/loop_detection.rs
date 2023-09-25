@@ -1,4 +1,4 @@
-use std::collections::HashSet;
+use std::collections::{HashSet, HashMap};
 
 use super::save_kb::{load_coordinates_from_file, save_coordinates_to_file};
 
@@ -17,13 +17,23 @@ pub fn add_path(x: i32,y: i32){
 
 }
 
-fn has_loop(path: &Vec<(i32,i32)>) -> bool {
-    let mut visited_nodes = HashSet::new();
+fn has_loop(path: &Vec<(i32,i32)>, min_occurrences: usize) -> bool {
+    if path.is_empty() {
+        return false; // Empty path cannot have loops
+    }
 
-    for node in path {
-        if !visited_nodes.insert(node) {
-            return true;
+    let mut visited_nodes = HashMap::new();
+
+    for (index, node) in path.iter().enumerate() {
+        let count = visited_nodes.entry(node).or_insert(0);
+        *count += 1;
+
+        // If the node has been visited at least min_occurrences times
+        if *count >= min_occurrences {
+            return true; // Loop detected
         }
+
+        visited_nodes.insert(node, index);
     }
 
     // No loop detected
@@ -35,7 +45,7 @@ pub fn detect_loop()->bool{
 
     match result {
         Ok(mut paths)=>{
-            return has_loop(&paths);
+            return has_loop(&paths, 3);
         }
         Err(error)=>{
             print!("{:?}",error);
