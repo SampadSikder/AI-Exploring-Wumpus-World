@@ -1,5 +1,7 @@
 use serde::{Serialize, Deserialize};
 
+use crate::api::loop_detection::detect_loop;
+
 const BREEZE : char = 'b';
 const STENCH : char = 's';
 const GLITTER : char = 'g';
@@ -58,7 +60,6 @@ fn update_knowledge_base(x: i32, y: i32, perceived_arr: &Vec<char>, knowledge_ba
     let y:usize = y as usize;
 
     for &perceived  in perceived_arr {
-        print!("DEBUG PERCEPTS: {:?}",perceived);
         knowledge_base[x][y].pit &= perceived == BREEZE;
         knowledge_base[x][y].wumpus &= perceived == STENCH;
         knowledge_base[x][y].gold &= perceived == GLITTER;
@@ -141,8 +142,6 @@ pub fn get_next_move(x: i32, y: i32, perceived: &Vec<char>, knowledge_base: &mut
     else if predicate_glittery_and_safe_path(x+1, y, knowledge_base) {return (x+1,y)} 
     else if predicate_glittery_and_safe_path(x-1, y, knowledge_base) {return (x-1,y)} ;
 
-
-
     if predicate_throw_arrow(x-1,y,knowledge_base,num_of_arrows) {return (x-1,y);}
     else if predicate_throw_arrow(x+1,y,knowledge_base,num_of_arrows) {return (x+1,y);}
     else if predicate_throw_arrow(x,y-1,knowledge_base,num_of_arrows) {return (x,y-1);}
@@ -152,8 +151,11 @@ pub fn get_next_move(x: i32, y: i32, perceived: &Vec<char>, knowledge_base: &mut
     if predicate_safe_unvisited_path(x, y+1, knowledge_base) {return (x,y+1)} 
     else if predicate_safe_unvisited_path(x, y-1, knowledge_base) {return (x,y-1)} 
     else if predicate_safe_unvisited_path(x+1, y, knowledge_base) {return (x+1,y)} 
-    else if predicate_safe_unvisited_path(x-1, y, knowledge_base) {return (x-1,y)} ;
-    
+    else if predicate_safe_unvisited_path(x-1, y, knowledge_base) {return (x-1,y)} ;    
+
+    if detect_loop() {
+        print!("---------------------------LOOP DETECTED AT {:?},{:?}",x,y);
+    }
 
     print!("Found no unvisited safe node so backtracking...");
 

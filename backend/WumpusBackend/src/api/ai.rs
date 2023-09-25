@@ -1,6 +1,9 @@
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
 use serde::{Deserialize, Serialize};
+use crate::api::loop_detection::add_path;
+use crate::api::save_kb::save_coordinates_to_file;
+
 use super::logic::get_next_move;
 use super::logic::initialize_knowledge_base;
 use super::logic::CellKnowledge;
@@ -21,6 +24,8 @@ async fn initialize() -> impl Responder {
     initialize_knowledge_base(&mut knowledge_base);
     println!("Done initializing KB. Time to save it.");
 
+    let mut paths : Vec<(i32,i32)> = Vec::new();
+    save_coordinates_to_file(&paths, &String::from("path.txt"));
     save_knowledge_base(&String::from("kb.txt"),&knowledge_base);
     let result = load_knowledge_base(&String::from("kb.txt"));
     match result {
@@ -40,7 +45,7 @@ pub async fn start_explore(
     cell: web::Json<Cell>
 ) -> HttpResponse {
     let mut cell_data = cell.into_inner();
-    println!("{:?}", cell_data.piece);
+    //println!("{:?}", cell_data.piece);
 
     let mut perceived : Vec<char> = Vec::new();
     for character in cell_data.piece.chars() {
@@ -52,6 +57,8 @@ pub async fn start_explore(
         Ok(mut knowledge_base) => {
             let _move = get_next_move(cell_data.x, cell_data.y, &perceived, &mut knowledge_base, &mut cell_data.arrows);
             let _ = save_knowledge_base(&String::from("kb.txt"),&knowledge_base);
+
+            add_path(_move.0, _move.1);
 
             HttpResponse::Ok().json(Cell{
                 x: _move.0 as i32,
