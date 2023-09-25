@@ -111,12 +111,11 @@ fn exclude_death_paths(x: i32, y: i32, knowledge_base: &mut Vec<Vec<CellKnowledg
     let x:usize = x as usize;
     let y:usize = y as usize;
 
-    // ERROR , CHECK x-1 >0
 
-    if x!=0 && knowledge_base[x-1][y].countBreezeSensedNearby < 2 && knowledge_base[x-1][y].countStenchSensedNearby < 2 {less_dangerous_paths.push((x-1,y));}
-    else if knowledge_base[x+1][y].countBreezeSensedNearby < 2 && knowledge_base[x+1][y].countStenchSensedNearby < 2 {less_dangerous_paths.push((x+1,y));}
-    else if y!=0 && knowledge_base[x][y-1].countBreezeSensedNearby < 2 && knowledge_base[x][y-1].countStenchSensedNearby < 2 {less_dangerous_paths.push((x,y-1));}
-    else if knowledge_base[x][y+1].countBreezeSensedNearby < 2 && knowledge_base[x][y+1].countStenchSensedNearby < 2 {less_dangerous_paths.push((x,y+1));}
+    if x!=0 && knowledge_base[x-1][y].countBreezeSensedNearby < 2 && knowledge_base[x-1][y].countStenchSensedNearby < 2 && knowledge_base[x-1][y].visited == false {less_dangerous_paths.push((x-1,y));}
+    else if x+1!=WUMPUS_WORLD_SIZE as usize && knowledge_base[x+1][y].countBreezeSensedNearby < 2 && knowledge_base[x+1][y].countStenchSensedNearby < 2 && knowledge_base[x+1][y].visited == false {less_dangerous_paths.push((x+1,y));}
+    else if y!=0 && knowledge_base[x][y-1].countBreezeSensedNearby < 2 && knowledge_base[x][y-1].countStenchSensedNearby < 2 && knowledge_base[x][y-1].visited == false {less_dangerous_paths.push((x,y-1));}
+    else if y+1!=WUMPUS_WORLD_SIZE as usize && knowledge_base[x][y+1].countBreezeSensedNearby < 2 && knowledge_base[x][y+1].countStenchSensedNearby < 2  && knowledge_base[x][y+1].visited == false{less_dangerous_paths.push((x,y+1));}
 
     return less_dangerous_paths;
 }
@@ -131,43 +130,44 @@ pub fn backtrack(x: i32,y: i32, knowledge_base: &mut Vec<Vec<CellKnowledge>>) ->
 
 pub fn get_next_move(x: i32, y: i32, perceived: &Vec<char>, knowledge_base: &mut Vec<Vec<CellKnowledge>>, num_of_arrows: &mut u32)->(i32, i32){
     knowledge_base[x as usize][y as usize].visited = true;
+    
+    if !detect_loop() {
+        update_knowledge_base(x-1, y, &perceived, knowledge_base);
+        update_knowledge_base(x+1, y, &perceived, knowledge_base);
+        update_knowledge_base(x, y-1, &perceived, knowledge_base);
+        update_knowledge_base(x, y+1, &perceived, knowledge_base);
 
-    update_knowledge_base(x-1, y, &perceived, knowledge_base);
-    update_knowledge_base(x+1, y, &perceived, knowledge_base);
-    update_knowledge_base(x, y-1, &perceived, knowledge_base);
-    update_knowledge_base(x, y+1, &perceived, knowledge_base);
+        if predicate_glittery_and_safe_path(x, y+1, knowledge_base) {return (x,y+1)} 
+        else if predicate_glittery_and_safe_path(x, y-1, knowledge_base) {return (x,y-1)} 
+        else if predicate_glittery_and_safe_path(x+1, y, knowledge_base) {return (x+1,y)} 
+        else if predicate_glittery_and_safe_path(x-1, y, knowledge_base) {return (x-1,y)} ;
 
-    if predicate_glittery_and_safe_path(x, y+1, knowledge_base) {return (x,y+1)} 
-    else if predicate_glittery_and_safe_path(x, y-1, knowledge_base) {return (x,y-1)} 
-    else if predicate_glittery_and_safe_path(x+1, y, knowledge_base) {return (x+1,y)} 
-    else if predicate_glittery_and_safe_path(x-1, y, knowledge_base) {return (x-1,y)} ;
-
-    if predicate_throw_arrow(x-1,y,knowledge_base,num_of_arrows) {return (x-1,y);}
-    else if predicate_throw_arrow(x+1,y,knowledge_base,num_of_arrows) {return (x+1,y);}
-    else if predicate_throw_arrow(x,y-1,knowledge_base,num_of_arrows) {return (x,y-1);}
-    else if predicate_throw_arrow(x,y+1,knowledge_base,num_of_arrows) {return (x,y+1);}
+        if predicate_throw_arrow(x-1,y,knowledge_base,num_of_arrows) {return (x-1,y);}
+        else if predicate_throw_arrow(x+1,y,knowledge_base,num_of_arrows) {return (x+1,y);}
+        else if predicate_throw_arrow(x,y-1,knowledge_base,num_of_arrows) {return (x,y-1);}
+        else if predicate_throw_arrow(x,y+1,knowledge_base,num_of_arrows) {return (x,y+1);}
 
 
-    if predicate_safe_unvisited_path(x, y+1, knowledge_base) {return (x,y+1)} 
-    else if predicate_safe_unvisited_path(x, y-1, knowledge_base) {return (x,y-1)} 
-    else if predicate_safe_unvisited_path(x+1, y, knowledge_base) {return (x+1,y)} 
-    else if predicate_safe_unvisited_path(x-1, y, knowledge_base) {return (x-1,y)} ;    
+        if predicate_safe_unvisited_path(x, y+1, knowledge_base) {return (x,y+1)} 
+        else if predicate_safe_unvisited_path(x, y-1, knowledge_base) {return (x,y-1)} 
+        else if predicate_safe_unvisited_path(x+1, y, knowledge_base) {return (x+1,y)} 
+        else if predicate_safe_unvisited_path(x-1, y, knowledge_base) {return (x-1,y)} ;    
 
-    if detect_loop() {
-        print!("---------------------------LOOP DETECTED AT {:?},{:?}",x,y);
-    }
+        print!("Found no unvisited safe node so backtracking...");
+        if backtrack(x,y+1,knowledge_base) {return (x,y+1);}
+        else if backtrack(x,y-1,knowledge_base) {return (x,y-1);}
+        else if backtrack(x+1,y,knowledge_base) {return (x+1,y);}
+        else if backtrack(x-1,y,knowledge_base) {return (x-1,y);};
+    } else {print!("LOOP DETECTED!");}
 
-    print!("Found no unvisited safe node so backtracking...");
 
-    // Backtrack since no visited safe path found 
+    let probably_dangerous_paths = exclude_death_paths(x,y, knowledge_base);
+    if probably_dangerous_paths.len() != 0 {return (probably_dangerous_paths[0].0 as i32, probably_dangerous_paths[0].1 as i32)};
+    // Simply Backtrack == BAD. TODO
     if backtrack(x,y+1,knowledge_base) {return (x,y+1);}
     else if backtrack(x,y-1,knowledge_base) {return (x,y-1);}
     else if backtrack(x+1,y,knowledge_base) {return (x+1,y);}
     else if backtrack(x-1,y,knowledge_base) {return (x-1,y);};
-
-
-    // We are back to cell (1,1). We have no other choice but to make a dangerous move So we will list "probably dangerous" paths and pick one at random.
-    let probably_dangerous_paths = exclude_death_paths(x,y, knowledge_base);
-    return (probably_dangerous_paths[0].0 as i32, probably_dangerous_paths[0].1 as i32);
+    return (1,1);
 
 }
