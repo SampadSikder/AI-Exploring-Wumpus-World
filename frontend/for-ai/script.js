@@ -61,6 +61,7 @@ let exploredWorld = [];
 let agent_position = {"x":0, "y":0};
 const WUMPUS_WORLD_SIZE = 4;
 
+
 const ENTITY_COUNT = {
     "gold": 1,
     "pit": 1,
@@ -69,7 +70,8 @@ const ENTITY_COUNT = {
 
 function generate_world() {
 
-    let entity_count = {
+
+/*    let entity_count = {
         "gold": 0,
         "pit": 0,
         "wumpus": 0
@@ -101,7 +103,15 @@ function generate_world() {
                 wumpusWorld[i][j] = NORMAL_CELL ;
             }
         }
-    }
+    } */
+
+    const STATIC_WORLD = [
+        [AGENT, NORMAL_CELL, NORMAL_CELL, PIT],
+        [NORMAL_CELL, NORMAL_CELL,NORMAL_CELL, NORMAL_CELL],
+        [PIT, NORMAL_CELL, NORMAL_CELL, GOLD],
+        [NORMAL_CELL, NORMAL_CELL, WUMPUS, NORMAL_CELL]
+    ];
+    wumpusWorld = STATIC_WORLD;
 
     exploredWorld = JSON.parse(JSON.stringify(wumpusWorld));
 
