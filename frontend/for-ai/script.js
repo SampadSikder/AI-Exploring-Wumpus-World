@@ -239,7 +239,7 @@ function getPerceptAt(x,y){
 
     if(wumpusWorld[x][y]==PIT) return PIT.effect;
     if(wumpusWorld[x][y]==WUMPUS) return WUMPUS.effect;
-    if(wumpusWorld[x][y]==GOLD) return GOLD.effect;
+    //if(wumpusWorld[x][y]==GOLD) return GOLD.effect;
     return null;
 }
 
