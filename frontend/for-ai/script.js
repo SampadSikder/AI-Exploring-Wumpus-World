@@ -59,12 +59,12 @@ const AGENT = {
 let wumpusWorld = [];
 let exploredWorld = [];
 let agent_position = {"x":0, "y":0};
-const WUMPUS_WORLD_SIZE = 10;
+const WUMPUS_WORLD_SIZE = 4;
 
 const ENTITY_COUNT = {
-    "gold": 2,
-    "pit": 6,
-    "wumpus": 3
+    "gold": 1,
+    "pit": 1,
+    "wumpus": 1
 }
 
 function generate_world() {
@@ -72,7 +72,7 @@ function generate_world() {
     let entity_count = {
         "gold": 0,
         "pit": 0,
-        "wumput": 0
+        "wumpus": 0
     }
 
     // Initializing
@@ -94,9 +94,9 @@ function generate_world() {
             } else if (randomValue < 0.3 && entity_count.pit <= ENTITY_COUNT.pit) {
                 wumpusWorld[i][j] = PIT ;
                 entity_count.pit +=1 ;
-            } else if (randomValue < 0.4 && entity_count.wumput <= ENTITY_COUNT.wumpus) {
+            } else if (randomValue < 0.4 && entity_count.wumpus <= ENTITY_COUNT.wumpus) {
                 wumpusWorld[i][j] = WUMPUS ;
-                entity_count.wumput += 1;
+                entity_count.wumpus += 1;
             } else {
                 wumpusWorld[i][j] = NORMAL_CELL ;
             }
@@ -122,7 +122,7 @@ function drawOriginalWorld() {
             const cellValue = wumpusWorld[i][j];
 
             const squareElement = document.createElement("img");
-            squareElement.id = `${i}-${j}`;
+            squareElement.id = `origin-${i}-${j}`;
             squareElement.classList.add("square");
 
             squareElement.innerText = cellValue.piece_name;
@@ -176,6 +176,7 @@ function drawExploredWorld() {
             gridElement.appendChild(squareElement);
         }
     }
+    console.log(exploredWorld);
 }
 
 

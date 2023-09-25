@@ -8,7 +8,7 @@ const PIT : u8 = b'p';
 const WUMPUS : u8 = b'w';
 const GOLD : u8 = b'$';
 
-const WUMPUS_WORLD_SIZE : i32 = 10;
+const WUMPUS_WORLD_SIZE : i32 = 4;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CellKnowledge {
@@ -62,9 +62,9 @@ fn update_knowledge_base(x: i32, y: i32, perceived_arr: &Vec<u8>, knowledge_base
     let y:usize = x as usize;
 
     for perceived  in perceived_arr {
-        knowledge_base[x][y].pit &= (*perceived == BREEZE);
-        knowledge_base[x][y].wumpus &= (*perceived == STENCH);
-        knowledge_base[x][y].gold &= (*perceived == GLITTER);
+        knowledge_base[x][y].pit &= *perceived == BREEZE;
+        knowledge_base[x][y].wumpus &= *perceived == STENCH;
+        knowledge_base[x][y].gold &= *perceived == GLITTER;
 
         if *perceived == BREEZE { knowledge_base[x][y].countBreezeSensedNearby+=1 }
         else if *perceived == STENCH { knowledge_base[x][y].countStenchSensedNearby+=1 }
@@ -134,33 +134,39 @@ pub fn backtrack(x: i32,y: i32, knowledge_base: &mut Vec<Vec<CellKnowledge>>) ->
 pub fn get_next_move(x: i32, y: i32, perceived: &Vec<u8>, knowledge_base: &mut Vec<Vec<CellKnowledge>>, num_of_arrows: &mut u32)->(i32, i32){
     knowledge_base[x as usize][y as usize].visited = true;
 
+    update_knowledge_base(x, y, &perceived, knowledge_base);
     update_knowledge_base(x-1, y, &perceived, knowledge_base);
     update_knowledge_base(x+1, y, &perceived, knowledge_base);
     update_knowledge_base(x, y-1, &perceived, knowledge_base);
     update_knowledge_base(x, y+1, &perceived, knowledge_base);
 
-    if predicate_glittery_and_safe_path(x+1, y, knowledge_base) {return (x+1,y)} 
-    else if predicate_glittery_and_safe_path(x-1, y, knowledge_base) {return (x-1,y)} 
-    else if predicate_glittery_and_safe_path(x, y+1, knowledge_base) {return (x,y+1)} 
-    else if predicate_glittery_and_safe_path(x, y-1, knowledge_base) {return (x,y-1)} ;
+    if predicate_glittery_and_safe_path(x, y+1, knowledge_base) {return (x,y+1)} 
+    else if predicate_glittery_and_safe_path(x, y-1, knowledge_base) {return (x,y-1)} 
+    else if predicate_glittery_and_safe_path(x+1, y, knowledge_base) {return (x+1,y)} 
+    else if predicate_glittery_and_safe_path(x-1, y, knowledge_base) {return (x-1,y)} ;
+
+
 
     if predicate_throw_arrow(x-1,y,knowledge_base,num_of_arrows) {return (x-1,y);}
     else if predicate_throw_arrow(x+1,y,knowledge_base,num_of_arrows) {return (x+1,y);}
     else if predicate_throw_arrow(x,y-1,knowledge_base,num_of_arrows) {return (x,y-1);}
     else if predicate_throw_arrow(x,y+1,knowledge_base,num_of_arrows) {return (x,y+1);}
 
-    if predicate_safe_unvisited_path(x+1, y, knowledge_base) {return (x+1,y)} 
-    else if predicate_safe_unvisited_path(x-1, y, knowledge_base) {return (x-1,y)} 
-    else if predicate_safe_unvisited_path(x, y+1, knowledge_base) {return (x,y+1)} 
-    else if predicate_safe_unvisited_path(x, y-1, knowledge_base) {return (x,y-1)} ;
+
+    if predicate_safe_unvisited_path(x, y+1, knowledge_base) {return (x,y+1)} 
+    else if predicate_safe_unvisited_path(x, y-1, knowledge_base) {return (x,y-1)} 
+    else if predicate_safe_unvisited_path(x+1, y, knowledge_base) {return (x+1,y)} 
+    else if predicate_safe_unvisited_path(x-1, y, knowledge_base) {return (x-1,y)} ;
+    
 
     print!("Found no unvisited safe node so backtracking...");
 
     // Backtrack since no visited safe path found 
-    if backtrack(x+1,y,knowledge_base) {return (x+1,y);}
-    else if backtrack(x-1,y,knowledge_base) {return (x-1,y);}
-    else if backtrack(x,y+1,knowledge_base) {return (x,y+1);}
+    if backtrack(x,y+1,knowledge_base) {return (x,y+1);}
     else if backtrack(x,y-1,knowledge_base) {return (x,y-1);}
+    else if backtrack(x+1,y,knowledge_base) {return (x+1,y);}
+    else if backtrack(x-1,y,knowledge_base) {return (x-1,y);};
+
 
     // We are back to cell (1,1). We have no other choice but to make a dangerous move So we will list "probably dangerous" paths and pick one at random.
     let probably_dangerous_paths = exclude_death_paths(x,y, knowledge_base);
