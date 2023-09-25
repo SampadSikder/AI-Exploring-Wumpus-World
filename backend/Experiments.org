@@ -1,10 +1,14 @@
 * Literature Review
+- [ ] Watched Youtube video
 * Bugs
-1. Glitter bug in frontend
+- [X] Glitter bug in frontend
 * TODO
-- [ ] Frontend effects
-- [ ] Glitter Bug
+- [X] Frontend effects
+- [X] Glitter Bug
 - [X] Use standard 4X4 board
 ** Algorithm
 - [ ] Loop Detectuib
 - [ ] Decrease KB
+* Progress
+The following figure proves that we have implemented the effects properly and the glitter bug does not exist.
+[[file:.doc-contents/frontend_effects.png]]

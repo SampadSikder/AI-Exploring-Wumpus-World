@@ -43,7 +43,8 @@ const NORMAL_CELL = {
 const AGENT = {
     "piece": "A",
     "piece_name": "Agent",
-    "image": "./resources/player_facing_to_down.png"
+    "image": "./resources/player_facing_to_down.png",
+    "effect_name": ""
 }
 
 let wumpusWorld = [];
@@ -129,15 +130,15 @@ function drawExploredWorld() {
             squareElement.id = `${i}-${j}`;
             squareElement.classList.add("square");
 
-            if (exploredWorld[i][j]==EXPLORED_CELL) {
+            //if (exploredWorld[i][j]==EXPLORED_CELL) {
                 let percepts = "";
-                if(i-1>0 && wumpusWorld[i-1][j]!=NORMAL_CELL && wumpusWorld[i-1][j]!=AGENT) percepts+=wumpusWorld[i-1][j].effect_name+"\n";
-                if(i+1<WUMPUS_WORLD_SIZE && wumpusWorld[i+1][j]!=NORMAL_CELL && wumpusWorld[i+1][j]!=AGENT) percepts+=wumpusWorld[i+1][j].effect_name+"\n";
-                if(j-1>0 && wumpusWorld[i][j-1]!=NORMAL_CELL && wumpusWorld[i][j-1]!=AGENT) percepts+=wumpusWorld[i][j-1].effect_name+"\n";
-                if(j+1<WUMPUS_WORLD_SIZE && wumpusWorld[i][j+1]!=NORMAL_CELL && wumpusWorld[i][j+1]!=AGENT) percepts+=wumpusWorld[i][j+1].effect_name+"\n";
+                if(i-1>0 && wumpusWorld[i-1][j]!=NORMAL_CELL && wumpusWorld[i-1][j]!=GOLD) percepts+=wumpusWorld[i-1][j].effect_name+"\n";
+                if(i+1<WUMPUS_WORLD_SIZE && wumpusWorld[i+1][j]!=NORMAL_CELL && wumpusWorld[i+1][j]!=GOLD) percepts+=wumpusWorld[i+1][j].effect_name+"\n";
+                if(j-1>0 && wumpusWorld[i][j-1]!=NORMAL_CELL && wumpusWorld[i][j-1]!=GOLD) percepts+=wumpusWorld[i][j-1].effect_name+"\n";
+                if(j+1<WUMPUS_WORLD_SIZE && wumpusWorld[i][j+1]!=NORMAL_CELL && wumpusWorld[i][j+1]!=GOLD) percepts+=wumpusWorld[i][j+1].effect_name+"\n";
 
                 squareElement.innerText = percepts;
-            }
+           // }
 
             if (cellValue["piece_name"] == "Explored") {
                 squareElement.style.backgroundImage = `url(${EXPLORED_CELL.image})`;
