@@ -1,0 +1,6 @@
+* Literature Review
+* Bugs
+1. Glitter bug in frontend
+* TODO
+- [ ] Frontend effects
+- [ ] Use standard 4X4 board

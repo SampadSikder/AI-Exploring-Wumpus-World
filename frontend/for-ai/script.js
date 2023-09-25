@@ -106,10 +106,10 @@ function generate_world() {
     } */
 
     const STATIC_WORLD = [
-        [AGENT, NORMAL_CELL, NORMAL_CELL, PIT],
+        [AGENT, NORMAL_CELL, PIT, NORMAL_CELL],
         [NORMAL_CELL, NORMAL_CELL,NORMAL_CELL, NORMAL_CELL],
-        [PIT, NORMAL_CELL, NORMAL_CELL, GOLD],
-        [NORMAL_CELL, NORMAL_CELL, WUMPUS, NORMAL_CELL]
+        [WUMPUS, GOLD, PIT, NORMAL_CELL],
+        [NORMAL_CELL, NORMAL_CELL, NORMAL_CELL, PIT]
     ];
     wumpusWorld = STATIC_WORLD;
 
@@ -126,6 +126,9 @@ function generate_world() {
 
 function drawOriginalWorld() {
     const gridElement = document.getElementById("original-world");
+    while (gridElement.firstChild) {
+        gridElement.removeChild(gridElement.firstChild);
+    }
 
     for (let i = 0; i < wumpusWorld.length; i++) {
         for (let j = 0; j < wumpusWorld[i].length; j++) {
