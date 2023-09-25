@@ -42,9 +42,9 @@ pub async fn start_explore(
     let mut cell_data = cell.into_inner();
     println!("{:?}", cell_data.piece);
 
-    let mut perceived : Vec<u8> = Vec::new();
-    for character in cell_data.piece.as_bytes() {
-        perceived.push(*character);
+    let mut perceived : Vec<char> = Vec::new();
+    for character in cell_data.piece.chars() {
+        perceived.push(character);
     }
 
     let result = load_knowledge_base(&String::from("kb.txt"));

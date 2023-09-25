@@ -51,6 +51,7 @@ let wumpusWorld = [];
 let exploredWorld = [];
 let agent_position = {"x":0, "y":0};
 const WUMPUS_WORLD_SIZE = 4;
+let arrows = 1;
 
 
 const ENTITY_COUNT = {
@@ -130,7 +131,7 @@ function drawExploredWorld() {
             squareElement.id = `${i}-${j}`;
             squareElement.classList.add("square");
 
-            //if (exploredWorld[i][j]==EXPLORED_CELL) {
+            if (exploredWorld[i][j]==EXPLORED_CELL) {
                 let percepts = "";
                 if(i-1>0 && wumpusWorld[i-1][j]!=NORMAL_CELL && wumpusWorld[i-1][j]!=GOLD) percepts+=wumpusWorld[i-1][j].effect_name+"\n";
                 if(i+1<WUMPUS_WORLD_SIZE && wumpusWorld[i+1][j]!=NORMAL_CELL && wumpusWorld[i+1][j]!=GOLD) percepts+=wumpusWorld[i+1][j].effect_name+"\n";
@@ -138,7 +139,7 @@ function drawExploredWorld() {
                 if(j+1<WUMPUS_WORLD_SIZE && wumpusWorld[i][j+1]!=NORMAL_CELL && wumpusWorld[i][j+1]!=GOLD) percepts+=wumpusWorld[i][j+1].effect_name+"\n";
 
                 squareElement.innerText = percepts;
-           // }
+           }
 
             if (cellValue["piece_name"] == "Explored") {
                 squareElement.style.backgroundImage = `url(${EXPLORED_CELL.image})`;
@@ -168,7 +169,12 @@ function drawExploredWorld() {
 
 function makeYourMoveAI() {
     console.log("Wait for move");
-    console.log(agent_position);
+    console.log({
+        x: agent_position.x,
+        y: agent_position.y,
+        piece: getPercepts(agent_position.x,agent_position.y),
+        arrows: arrows
+    });
 
     fetch(URL, {
         method: "POST",
@@ -179,7 +185,7 @@ function makeYourMoveAI() {
             x: agent_position.x,
             y: agent_position.y,
             piece: getPercepts(agent_position.x,agent_position.y),
-            arrows: 1 
+            arrows: arrows
         }),
     })
         .then((response) => response.json())
@@ -234,7 +240,7 @@ function getPerceptAt(x,y){
     if(wumpusWorld[x][y]==PIT) return PIT.effect;
     if(wumpusWorld[x][y]==WUMPUS) return WUMPUS.effect;
     if(wumpusWorld[x][y]==GOLD) return GOLD.effect;
-    return NORMAL_CELL.effect;
+    return null;
 }
 
 function getPercepts(x,y){
@@ -243,6 +249,8 @@ function getPercepts(x,y){
     if(getPerceptAt(x+1,y)) percepts+=getPerceptAt(x+1,y);
     if(getPerceptAt(x,y-1)) percepts+=getPerceptAt(x,y-1);
     if(getPerceptAt(x,y+1)) percepts+=getPerceptAt(x,y+1);
+
+    if(percepts.length == 0) percepts += NORMAL_CELL.effect;
 
     return percepts;
 }

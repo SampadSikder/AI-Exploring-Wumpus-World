@@ -1,11 +1,12 @@
 * Literature Review
-- [ ] Watched Youtube video
+- [X] Watched Youtube video
 * Bugs
 - [X] Glitter bug in frontend
 * TODO
 - [X] Frontend effects
 - [X] Glitter Bug
 - [X] Use standard 4X4 board
+- [ ] Think on effect of n
 ** Algorithm
 - [ ] Loop Detectuib
 - [ ] Decrease KB
