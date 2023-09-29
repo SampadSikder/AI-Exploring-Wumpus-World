@@ -56,8 +56,8 @@ let arrows = 1;
 
 const ENTITY_COUNT = {
     "gold": 3,
-    "pit": 10,
-    "wumpus": 4
+    "pit": 2,
+    "wumpus": 3
 }
 
 function generate_world() {
