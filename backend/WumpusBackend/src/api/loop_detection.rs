@@ -30,6 +30,10 @@ fn has_loop(path: &Vec<(i32,i32)>, min_occurrences: usize) -> bool {
 
         // If the node has been visited at least min_occurrences times
         if *count >= min_occurrences {
+
+            // Clear Path File to ensure that same loop is not detected everytime.
+            let _ = save_coordinates_to_file(&[], "path.txt");
+
             return true; // Loop detected
         }
 

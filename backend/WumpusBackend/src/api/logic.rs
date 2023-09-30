@@ -244,7 +244,7 @@ fn find_frontier_cells(knowledge_base: &Vec<Vec<CellKnowledge>>) -> Vec<(usize, 
     frontier_cells
 }
 
-pub fn backtrack(x: i32, y: i32, knowledge_base: &mut Vec<Vec<CellKnowledge>>) -> bool {
+pub fn backtrack(x: i32, y: i32, knowledge_base: &Vec<Vec<CellKnowledge>>) -> bool {
     if x < 0 || y < 0 || x >= WUMPUS_WORLD_SIZE || y >= WUMPUS_WORLD_SIZE {
         return false;
     }
