@@ -56,7 +56,7 @@ let arrows = 1;
 
 const ENTITY_COUNT = {
     "gold": 3,
-    "pit": 2,
+    "pit": 10,
     "wumpus": 3
 }
 
