@@ -3,6 +3,8 @@ use serde::{Deserialize, Serialize};
 use crate::api::loop_detection::detect_loop;
 use std::collections::VecDeque;
 
+use super::save_kb::save_bfs_path_to_file;
+
 const BREEZE: char = 'b';
 const STENCH: char = 's';
 const GLITTER: char = 'g';
@@ -308,6 +310,9 @@ pub fn get_next_move(
     knowledge_base: &mut Vec<Vec<CellKnowledge>>,
     num_of_arrows: &mut u32,
 ) -> (i32, i32) {
+    let temp: Vec<(usize, usize)> = Vec::new();
+    let _ = save_bfs_path_to_file(temp, &String::from("bfs_path.txt"));
+
     knowledge_base[x as usize][y as usize].visited = true;
 
     if !detect_loop() {
@@ -358,15 +363,15 @@ pub fn get_next_move(
         };
     } else {
         let frontier_cells = find_frontier_cells(&knowledge_base);
-        let frontier_cells = find_frontier_cells(&knowledge_base);
 
         if let Some(target) = find_least_dangerous_location(&frontier_cells, &knowledge_base) {
+
             if let Some(path) =
                 find_shortest_path_bfs(x as usize, y as usize, target, &knowledge_base)
             {
-                if let Some((next_x, next_y)) = path.get(1) {
-                    return (*next_x as i32, *next_y as i32);
-                }
+                let _ = save_bfs_path_to_file(path, &String::from("bfs_path.txt"));
+
+                return (1,1); // Returning dummy value
             }
             if let Some((next_x, next_y)) = frontier_cells.get(0) {
                 return (*next_x as i32, *next_y as i32);

@@ -1,7 +1,9 @@
+use actix_web::cookie::time::error;
 use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
 
 use serde::{Deserialize, Serialize};
 use crate::api::loop_detection::add_path;
+use crate::api::save_kb::load_bfs_path_from_file;
 use crate::api::save_kb::save_coordinates_to_file;
 
 use super::logic::get_next_move;
@@ -15,7 +17,8 @@ pub struct Cell {
     x: i32,
     y: i32,
     piece: String,
-    arrows: u32
+    arrows: u32,
+    path: Vec<(usize,usize)>
 }
 
 #[get("/")]
@@ -56,21 +59,39 @@ pub async fn start_explore(
     match result {
         Ok(mut knowledge_base) => {
             let _move = get_next_move(cell_data.x, cell_data.y, &perceived, &mut knowledge_base, &mut cell_data.arrows);
-            let _ = save_knowledge_base(&String::from("kb.txt"),&knowledge_base);
+            let _ = save_knowledge_base(&String::from("kb.txt"), &knowledge_base);
 
-            add_path(_move.0, _move.1);
+            let bfs_path_result = load_bfs_path_from_file("bfs_path.txt");
 
-            HttpResponse::Ok().json(Cell{
-                x: _move.0 as i32,
-                y: _move.1 as i32,
-                piece: cell_data.piece,
-                arrows: cell_data.arrows
-            })
-        } 
-        Err(error)=>{
-            print!("Got error {}",error);
-
+            match bfs_path_result {
+                Ok(bfs_path) => {
+                    if bfs_path.len() == 0 {
+                        add_path(_move.0, _move.1);
+                        return HttpResponse::Ok().json(Cell {
+                            x: _move.0 as i32,
+                            y: _move.1 as i32,
+                            piece: cell_data.piece,
+                            arrows: cell_data.arrows,
+                            path: vec![]
+                        });
+                    }
+                    HttpResponse::Ok().json(Cell {
+                        x: _move.0 as i32,
+                        y: _move.1 as i32,
+                        piece: cell_data.piece,
+                        arrows: cell_data.arrows,
+                        path: bfs_path
+                    })
+                }
+                Err(error) => {
+                    print!("Got error {}", error);
+                    HttpResponse::Ok().json("Encountered error while loading knowledge base.")
+                }
+            }
+        }
+        Err(error) => {
+            print!("Got error {}", error);
             HttpResponse::Ok().json("Encountered error while loading knowledge base.")
-        }  
+        }
     }
 }

@@ -50,6 +50,22 @@ pub(crate) fn load_coordinates_from_file(filename: &str) -> Result<Vec<(i32, i32
     Ok(coordinates)
 }
 
+
+
+pub(crate) fn save_bfs_path_to_file(coordinates: Vec<(usize, usize)>, filename: &str) -> Result<(), Box<dyn std::error::Error>> {
+    let file = File::create(filename)?;
+    serde_json::to_writer_pretty(file, &coordinates)?;
+    Ok(())
+}
+
+pub(crate) fn load_bfs_path_from_file(filename: &str) -> Result<Vec<(usize, usize)>, Box<dyn std::error::Error>> {
+    let file = File::open(filename)?;
+    let reader = std::io::BufReader::new(file);
+    let coordinates: Vec<(usize, usize)> = serde_json::from_reader(reader)?;
+    Ok(coordinates)
+}
+
+
 /* 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     // Example usage

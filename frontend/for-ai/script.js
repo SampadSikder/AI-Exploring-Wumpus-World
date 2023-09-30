@@ -185,7 +185,8 @@ function makeYourMoveAI() {
             x: agent_position.x,
             y: agent_position.y,
             piece: getPercepts(agent_position.x,agent_position.y),
-            arrows: arrows
+            arrows: arrows,
+            path: []
         }),
     })
         .then((response) => response.json())
@@ -193,9 +194,19 @@ function makeYourMoveAI() {
             console.log("AI has replied!");
             console.log(reply);
 
+
             exploredWorld[agent_position.x][agent_position.y] = EXPLORED_CELL;
-            agent_position.x = reply.x;
-            agent_position.y = reply.y;
+            if(reply.path.length!=0){
+                // Simulate move
+                agent_position.x = reply.path[reply.path.length-1][0];
+                agent_position.y = reply.path[reply.path.length-1][1];
+                console.log(`PATH SIMULATIONN:`);
+                console.log(agent_position);
+            }
+            else {
+                agent_position.x = reply.x;
+                agent_position.y = reply.y;
+            }
             exploredWorld[agent_position.x][agent_position.y] = AGENT;
 
             let message = "";
