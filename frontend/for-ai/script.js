@@ -49,7 +49,7 @@ const AGENT = {
 
 let wumpusWorld = [];
 let exploredWorld = [];
-let agent_position = {"x":0, "y":0};
+let agent_position = { "x": 0, "y": 0 };
 const WUMPUS_WORLD_SIZE = 10;
 let arrows = 1;
 
@@ -73,29 +73,29 @@ function generate_world() {
     for (let i = 0; i < WUMPUS_WORLD_SIZE; i++) {
         const row = [];
         for (let j = 0; j < WUMPUS_WORLD_SIZE; j++) {
-          row.push(NORMAL_CELL); 
+            row.push(NORMAL_CELL);
         }
         wumpusWorld.push(row);
     }
 
     // Generating World
-    for (let i = WUMPUS_WORLD_SIZE-1; i > 0; i--) {
-        for (let j = WUMPUS_WORLD_SIZE-1; j > 0; j--) {
+    for (let i = WUMPUS_WORLD_SIZE - 1; i > 0; i--) {
+        for (let j = WUMPUS_WORLD_SIZE - 1; j > 0; j--) {
             const randomValue = Math.random();
             if (randomValue < 0.1 && entity_count.gold <= ENTITY_COUNT.gold) {
-                wumpusWorld[i][j] = GOLD ;
-                entity_count.gold+=1;
+                wumpusWorld[i][j] = GOLD;
+                entity_count.gold += 1;
             } else if (randomValue < 0.3 && entity_count.pit <= ENTITY_COUNT.pit) {
-                wumpusWorld[i][j] = PIT ;
-                entity_count.pit +=1 ;
+                wumpusWorld[i][j] = PIT;
+                entity_count.pit += 1;
             } else if (randomValue < 0.4 && entity_count.wumpus <= ENTITY_COUNT.wumpus) {
-                wumpusWorld[i][j] = WUMPUS ;
+                wumpusWorld[i][j] = WUMPUS;
                 entity_count.wumpus += 1;
             } else {
-                wumpusWorld[i][j] = NORMAL_CELL ;
+                wumpusWorld[i][j] = NORMAL_CELL;
             }
         }
-    } 
+    }
 
     /*const STATIC_WORLD = [
         [AGENT, NORMAL_CELL, PIT, NORMAL_CELL],
@@ -131,15 +131,15 @@ function drawExploredWorld() {
             squareElement.id = `${i}-${j}`;
             squareElement.classList.add("square");
 
-            if (exploredWorld[i][j]==EXPLORED_CELL) {
+            if (exploredWorld[i][j] == EXPLORED_CELL) {
                 let percepts = "";
-                if(i-1>0 && wumpusWorld[i-1][j]!=NORMAL_CELL && wumpusWorld[i-1][j]!=GOLD) percepts+=wumpusWorld[i-1][j].effect_name+"\n";
-                if(i+1<WUMPUS_WORLD_SIZE && wumpusWorld[i+1][j]!=NORMAL_CELL && wumpusWorld[i+1][j]!=GOLD) percepts+=wumpusWorld[i+1][j].effect_name+"\n";
-                if(j-1>0 && wumpusWorld[i][j-1]!=NORMAL_CELL && wumpusWorld[i][j-1]!=GOLD) percepts+=wumpusWorld[i][j-1].effect_name+"\n";
-                if(j+1<WUMPUS_WORLD_SIZE && wumpusWorld[i][j+1]!=NORMAL_CELL && wumpusWorld[i][j+1]!=GOLD) percepts+=wumpusWorld[i][j+1].effect_name+"\n";
+                if (i - 1 > 0 && wumpusWorld[i - 1][j] != NORMAL_CELL && wumpusWorld[i - 1][j] != GOLD) percepts += wumpusWorld[i - 1][j].effect_name + "\n";
+                if (i + 1 < WUMPUS_WORLD_SIZE && wumpusWorld[i + 1][j] != NORMAL_CELL && wumpusWorld[i + 1][j] != GOLD) percepts += wumpusWorld[i + 1][j].effect_name + "\n";
+                if (j - 1 > 0 && wumpusWorld[i][j - 1] != NORMAL_CELL && wumpusWorld[i][j - 1] != GOLD) percepts += wumpusWorld[i][j - 1].effect_name + "\n";
+                if (j + 1 < WUMPUS_WORLD_SIZE && wumpusWorld[i][j + 1] != NORMAL_CELL && wumpusWorld[i][j + 1] != GOLD) percepts += wumpusWorld[i][j + 1].effect_name + "\n";
 
                 squareElement.innerText = percepts;
-           }
+            }
 
             if (cellValue["piece_name"] == "Explored") {
                 squareElement.style.backgroundImage = `url(${EXPLORED_CELL.image})`;
@@ -149,13 +149,13 @@ function drawExploredWorld() {
             } else if (cellValue["piece_name"] == "Agent") {
                 squareElement.style.backgroundImage = `url(${AGENT.image})`;
             }
-            
-            if(exploredWorld[i][j]==EXPLORED_CELL){
-                if (wumpusWorld[i][j]==WUMPUS) {
+
+            if (exploredWorld[i][j] == EXPLORED_CELL) {
+                if (wumpusWorld[i][j] == WUMPUS) {
                     squareElement.style.backgroundImage = `url(${WUMPUS.image})`;
-                } else if (wumpusWorld[i][j]==GOLD) {
+                } else if (wumpusWorld[i][j] == GOLD) {
                     squareElement.style.backgroundImage = `url(${GOLD.image})`;
-                } else if (wumpusWorld[i][j]==PIT) {
+                } else if (wumpusWorld[i][j] == PIT) {
                     squareElement.style.backgroundImage = `url(${PIT.image})`;
                 }
             }
@@ -172,7 +172,7 @@ function makeYourMoveAI() {
     console.log({
         x: agent_position.x,
         y: agent_position.y,
-        piece: getPercepts(agent_position.x,agent_position.y),
+        piece: getPercepts(agent_position.x, agent_position.y),
         arrows: arrows
     });
 
@@ -184,7 +184,7 @@ function makeYourMoveAI() {
         body: JSON.stringify({
             x: agent_position.x,
             y: agent_position.y,
-            piece: getPercepts(agent_position.x,agent_position.y),
+            piece: getPercepts(agent_position.x, agent_position.y),
             arrows: arrows,
             path: []
         }),
@@ -196,12 +196,46 @@ function makeYourMoveAI() {
 
 
             exploredWorld[agent_position.x][agent_position.y] = EXPLORED_CELL;
-            if(reply.path.length!=0){
-                // Simulate move
-                agent_position.x = reply.path[reply.path.length-1][0];
-                agent_position.y = reply.path[reply.path.length-1][1];
-                console.log(`PATH SIMULATIONN:`);
-                console.log(agent_position);
+            if (reply.path.length != 0) {
+                let i = 0;
+                let previousValue;
+                const moveInterval = setInterval(function () {
+                    if (i < reply.path.length) {
+                        const newX = reply.path[i][0];
+                        const newY = reply.path[i][1];
+
+                        agent_position.x = newX;
+                        agent_position.y = newY;
+                        previousValue = exploredWorld[newX][newY];
+                        exploredWorld[newX][newY] = AGENT;
+
+                        // Restore the previous cell to its original value
+
+                        if (i > 0 && i != reply.path.length - 1) {
+                            const prevX = reply.path[i - 1][0];
+                            const prevY = reply.path[i - 1][1];
+                            exploredWorld[prevX][prevY] = previousValue;
+                        } else {
+                            const prevX = reply.path[reply.path.length - 1][0];
+                            const prevY = reply.path[reply.path.length - 1][1];
+                            exploredWorld[prevX][prevY] = NORMAL_CELL;
+                        }
+
+
+
+
+
+                        console.log("Reply path is: " + newX + " " + newY);
+                        drawExploredWorld();
+                        i++;
+                    } else {
+                        clearInterval(moveInterval); // Stop the animation loop
+                    }
+                }, 2000); // 2 second delay between moves
+                // agent_position.x = reply.path[reply.path.length - 1][0];
+                // agent_position.y = reply.path[reply.path.length - 1][1];
+                // console.log(`PATH SIMULATIONN:`);
+                // console.log(agent_position);
             }
             else {
                 agent_position.x = reply.x;
@@ -210,21 +244,21 @@ function makeYourMoveAI() {
             exploredWorld[agent_position.x][agent_position.y] = AGENT;
 
             let message = "";
-            if(wumpusWorld[agent_position.x][agent_position.y]==GOLD) {
+            if (wumpusWorld[agent_position.x][agent_position.y] == GOLD) {
                 message = "You have gained gold!";
                 wumpusWorld[agent_position.x][agent_position.y] = NORMAL_CELL;
-            }else if(wumpusWorld[agent_position.x][agent_position.y]==WUMPUS && reply.arrows < arrows) {
+            } else if (wumpusWorld[agent_position.x][agent_position.y] == WUMPUS && reply.arrows < arrows) {
                 message = "You have shot an arrow to wumpus and killed it!";
                 wumpusWorld[agent_position.x][agent_position.y] = NORMAL_CELL;
-            } else if(wumpusWorld[agent_position.x][agent_position.y]==WUMPUS) {
+            } else if (wumpusWorld[agent_position.x][agent_position.y] == WUMPUS) {
                 message = "You have been killed by wumpus! GAME OVER.";
                 //wumpusWorld[agent_position.x][agent_position.y] = NORMAL_CELL;
-            } else if(wumpusWorld[agent_position.x][agent_position.y]==PIT) {
+            } else if (wumpusWorld[agent_position.x][agent_position.y] == PIT) {
                 message = "You have dropped into PIT! GAME OVER.";
                 //wumpusWorld[agent_position.x][agent_position.y] = NORMAL_CELL;
             }
 
-            document.getElementById("game-message").innerText = "Message: "+message;
+            document.getElementById("game-message").innerText = "Message: " + message;
 
             drawExploredWorld();
         })
@@ -245,23 +279,23 @@ function handleNearbyCells(i, j, OBJECT) {
     return false;
 }
 
-function getPerceptAt(x,y){
-    if(x<0 || y<0 || x>=wumpusWorld.length || y>=wumpusWorld.length) return null;
+function getPerceptAt(x, y) {
+    if (x < 0 || y < 0 || x >= wumpusWorld.length || y >= wumpusWorld.length) return null;
 
-    if(wumpusWorld[x][y]==PIT) return PIT.effect;
-    if(wumpusWorld[x][y]==WUMPUS) return WUMPUS.effect;
+    if (wumpusWorld[x][y] == PIT) return PIT.effect;
+    if (wumpusWorld[x][y] == WUMPUS) return WUMPUS.effect;
     //if(wumpusWorld[x][y]==GOLD) return GOLD.effect;
     return null;
 }
 
-function getPercepts(x,y){
+function getPercepts(x, y) {
     percepts = "";
-    if(getPerceptAt(x-1,y)) percepts+=getPerceptAt(x-1,y);
-    if(getPerceptAt(x+1,y)) percepts+=getPerceptAt(x+1,y);
-    if(getPerceptAt(x,y-1)) percepts+=getPerceptAt(x,y-1);
-    if(getPerceptAt(x,y+1)) percepts+=getPerceptAt(x,y+1);
+    if (getPerceptAt(x - 1, y)) percepts += getPerceptAt(x - 1, y);
+    if (getPerceptAt(x + 1, y)) percepts += getPerceptAt(x + 1, y);
+    if (getPerceptAt(x, y - 1)) percepts += getPerceptAt(x, y - 1);
+    if (getPerceptAt(x, y + 1)) percepts += getPerceptAt(x, y + 1);
 
-    if(percepts.length == 0) percepts += NORMAL_CELL.effect;
+    if (percepts.length == 0) percepts += NORMAL_CELL.effect;
 
     return percepts;
 }

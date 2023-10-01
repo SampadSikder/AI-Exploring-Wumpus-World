@@ -196,8 +196,10 @@ fn find_least_dangerous_location(
     let mut least_dangerous_location: Option<(usize, usize)> = None;
 
     for &(i, j) in frontier_cells {
-        let danger_level = knowledge_base[i][j].countBreezeSensedNearby
-            + knowledge_base[i][j].countStenchSensedNearby;
+        let danger_level = (knowledge_base[i][j].countBreezeSensedNearby
+            * knowledge_base[i][j].countBreezeSensedNearby)
+            + (knowledge_base[i][j].countStenchSensedNearby
+                * knowledge_base[i][j].countStenchSensedNearby);
 
         if danger_level < min_danger {
             min_danger = danger_level;
@@ -365,13 +367,12 @@ pub fn get_next_move(
         let frontier_cells = find_frontier_cells(&knowledge_base);
 
         if let Some(target) = find_least_dangerous_location(&frontier_cells, &knowledge_base) {
-
             if let Some(path) =
                 find_shortest_path_bfs(x as usize, y as usize, target, &knowledge_base)
             {
                 let _ = save_bfs_path_to_file(path, &String::from("bfs_path.txt"));
 
-                return (1,1); // Returning dummy value
+                return (1, 1); // Returning dummy value
             }
             if let Some((next_x, next_y)) = frontier_cells.get(0) {
                 return (*next_x as i32, *next_y as i32);
