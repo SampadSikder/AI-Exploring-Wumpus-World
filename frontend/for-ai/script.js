@@ -198,8 +198,9 @@ async function makeYourMoveAI() {
             exploredWorld[agent_position.x][agent_position.y] = EXPLORED_CELL;
 
             if (reply.path.length != 0) { // Handle Loop
-                document.getElementById("event-logs").value += "Loop detected" + "\n";
+                document.getElementById("event-logs").value += "Loop detected";
                 
+                document.getElementById("moveBtn").disabled=true;
                 for(let i=0; i<reply.path.length; i++){
                     agent_position.x = reply.path[i][0];
                     agent_position.y = reply.path[i][1];
@@ -209,6 +210,7 @@ async function makeYourMoveAI() {
                     await sleep(1000);
                     exploredWorld[agent_position.x][agent_position.y] = EXPLORED_CELL;
                 }
+                document.getElementById("moveBtn").disabled=false;
             }
             else { // Handle Normal Move
                 agent_position.x = reply.x;
