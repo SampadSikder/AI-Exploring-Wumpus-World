@@ -50,7 +50,7 @@ const AGENT = {
 let wumpusWorld = [];
 let exploredWorld = [];
 let agent_position = { "x": 0, "y": 0 };
-const WUMPUS_WORLD_SIZE = 4;
+const WUMPUS_WORLD_SIZE = 10;
 let arrows = 1;
 
 
@@ -79,7 +79,7 @@ function generate_world() {
     }
 
     // Generating World
-    /*for (let i = WUMPUS_WORLD_SIZE - 1; i > 0; i--) {
+    for (let i = WUMPUS_WORLD_SIZE - 1; i > 0; i--) {
         for (let j = WUMPUS_WORLD_SIZE - 1; j > 0; j--) {
             const randomValue = Math.random();
             if (randomValue < 0.1 && entity_count.gold <= ENTITY_COUNT.gold) {
@@ -95,15 +95,15 @@ function generate_world() {
                 wumpusWorld[i][j] = NORMAL_CELL;
             }
         }
-    }*/
+    }
 
-    const STATIC_WORLD = [
-        [AGENT, NORMAL_CELL, PIT, NORMAL_CELL],
-        [NORMAL_CELL, NORMAL_CELL,NORMAL_CELL, NORMAL_CELL],
-        [WUMPUS, GOLD, PIT, NORMAL_CELL],
-        [NORMAL_CELL, NORMAL_CELL, NORMAL_CELL, PIT]
-    ];
-    wumpusWorld = STATIC_WORLD;
+    // const STATIC_WORLD = [
+    //     [AGENT, NORMAL_CELL, PIT, NORMAL_CELL],
+    //     [NORMAL_CELL, NORMAL_CELL, NORMAL_CELL, NORMAL_CELL],
+    //     [WUMPUS, GOLD, PIT, NORMAL_CELL],
+    //     [NORMAL_CELL, NORMAL_CELL, NORMAL_CELL, PIT]
+    // ];
+    // wumpusWorld = STATIC_WORLD;
 
     exploredWorld = JSON.parse(JSON.stringify(wumpusWorld));
 
@@ -122,7 +122,13 @@ function drawExploredWorld() {
     while (gridElement.firstChild) {
         gridElement.removeChild(gridElement.firstChild);
     }
-
+    // const STATIC_WORLD = [
+    //     [AGENT, NORMAL_CELL, PIT, NORMAL_CELL],
+    //     [NORMAL_CELL, NORMAL_CELL, NORMAL_CELL, NORMAL_CELL],
+    //     [WUMPUS, GOLD, PIT, NORMAL_CELL],
+    //     [NORMAL_CELL, NORMAL_CELL, NORMAL_CELL, PIT]
+    // ];
+    // wumpusWorld = STATIC_WORLD;
     for (let i = 0; i < exploredWorld.length; i++) {
         for (let j = 0; j < exploredWorld[i].length; j++) {
             const cellValue = exploredWorld[i][j];
@@ -198,10 +204,10 @@ async function makeYourMoveAI() {
             exploredWorld[agent_position.x][agent_position.y] = EXPLORED_CELL;
 
             if (reply.path.length != 0) { // Handle Loop
-                document.getElementById("event-logs").value += "Loop detected";
-                
-                document.getElementById("moveBtn").disabled=true;
-                for(let i=0; i<reply.path.length; i++){
+                document.getElementById("event-logs").value += "Loop detected" + " cell number: " + agent_position.x + " " + agent_position.y + "\n";
+
+                document.getElementById("moveBtn").disabled = true;
+                for (let i = 0; i < reply.path.length; i++) {
                     agent_position.x = reply.path[i][0];
                     agent_position.y = reply.path[i][1];
                     exploredWorld[agent_position.x][agent_position.y] = AGENT;
@@ -210,7 +216,7 @@ async function makeYourMoveAI() {
                     await sleep(1000);
                     exploredWorld[agent_position.x][agent_position.y] = EXPLORED_CELL;
                 }
-                document.getElementById("moveBtn").disabled=false;
+                document.getElementById("moveBtn").disabled = false;
             }
             else { // Handle Normal Move
                 agent_position.x = reply.x;
@@ -232,8 +238,15 @@ async function makeYourMoveAI() {
                 message = "You have dropped into PIT! GAME OVER.";
                 //wumpusWorld[agent_position.x][agent_position.y] = NORMAL_CELL;
             }
+
+            if (message != "") {
+                document.getElementById("game-message").innerText = "Normal Cell" + " cell number: " + agent_position.x + " " + agent_position.y + "\n";
+            }
+            else {
+                document.getElementById("event-logs").value += message + " cell number: " + agent_position.x + " " + agent_position.y + "\n";
+            }
             document.getElementById("game-message").innerText = "Message: " + message;
-            document.getElementById("event-logs").value += message + "\n";
+
             drawExploredWorld();
         })
         .catch((error) => {
@@ -329,32 +342,32 @@ function drawOriginalWorld() {
 
 function sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
-  }
+}
 
 
-function initialize_knowledge_base(){
+function initialize_knowledge_base() {
     fetch("http://localhost:8080")
-  .then(response => {
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-    return response.text(); // You can use .text() or other methods based on your response type
-  })
-  .then(data => {
-    // Handle the data here
-    console.log(data);
-  })
-  .catch(error => {
-    // Handle errors here
-    console.error('Fetch error:', error);
-  });
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.text(); // You can use .text() or other methods based on your response type
+        })
+        .then(data => {
+            // Handle the data here
+            console.log(data);
+        })
+        .catch(error => {
+            // Handle errors here
+            console.error('Fetch error:', error);
+        });
 
 }
-async function simulateTheWholeThing(){
+async function simulateTheWholeThing() {
     let moves = 0;
-    while(moves<100){
+    while (moves < 100) {
         await makeYourMoveAI();
         await sleep(1000);
-        moves+=1;
+        moves += 1;
     }
 }

@@ -11,7 +11,7 @@ const STENCH: char = 's';
 const GLITTER: char = 'g';
 const NORMAL: char = 'n';
 
-const WUMPUS_WORLD_SIZE: i32 = 4;
+const WUMPUS_WORLD_SIZE: i32 = 10;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CellKnowledge {
@@ -57,11 +57,20 @@ pub fn initialize_knowledge_base(knowledge_base: &mut Vec<Vec<CellKnowledge>>) {
     }
 }
 
-fn remove_stench_from_knowledge_base_at(x: i32, y: i32, knowledge_base: &mut Vec<Vec<CellKnowledge>>) {
-    if x<0 || y<0 || x as i32 >= WUMPUS_WORLD_SIZE || y as i32 >= WUMPUS_WORLD_SIZE {return;}
+fn remove_stench_from_knowledge_base_at(
+    x: i32,
+    y: i32,
+    knowledge_base: &mut Vec<Vec<CellKnowledge>>,
+) {
+    if x < 0 || y < 0 || x as i32 >= WUMPUS_WORLD_SIZE || y as i32 >= WUMPUS_WORLD_SIZE {
+        return;
+    }
 
-    if knowledge_base[x as usize][y as usize].countStenchSensedNearby!=0 {knowledge_base[x as usize][y as usize].countStenchSensedNearby-=1;}
-    else {knowledge_base[x as usize][y as usize].wumpus=false;}
+    if knowledge_base[x as usize][y as usize].countStenchSensedNearby != 0 {
+        knowledge_base[x as usize][y as usize].countStenchSensedNearby -= 1;
+    } else {
+        knowledge_base[x as usize][y as usize].wumpus = false;
+    }
 }
 
 fn update_knowledge_base(
@@ -83,15 +92,21 @@ fn update_knowledge_base(
         knowledge_base[x][y].gold &= perceived == GLITTER;
 
         if perceived == BREEZE {
-            knowledge_base[x][y].countBreezeSensedNearby = std::cmp::max(knowledge_base[x][y].countBreezeSensedNearby+1,3);
+            knowledge_base[x][y].countBreezeSensedNearby =
+                std::cmp::max(knowledge_base[x][y].countBreezeSensedNearby + 1, 3);
         } else if perceived == STENCH {
-            knowledge_base[x][y].countStenchSensedNearby = std::cmp::max(knowledge_base[x][y].countStenchSensedNearby+1,3);
+            knowledge_base[x][y].countStenchSensedNearby =
+                std::cmp::max(knowledge_base[x][y].countStenchSensedNearby + 1, 3);
         } else if perceived == GLITTER {
-            knowledge_base[x][y].countGlitterSensedNearby = std::cmp::max(knowledge_base[x][y].countGlitterSensedNearby+1,3);
+            knowledge_base[x][y].countGlitterSensedNearby =
+                std::cmp::max(knowledge_base[x][y].countGlitterSensedNearby + 1, 3);
         } else if perceived == NORMAL {
-            knowledge_base[x][y].countGlitterSensedNearby = std::cmp::min(knowledge_base[x][y].countGlitterSensedNearby+1,0);
-            knowledge_base[x][y].countBreezeSensedNearby = std::cmp::min(knowledge_base[x][y].countBreezeSensedNearby+1,0);
-            knowledge_base[x][y].countStenchSensedNearby = std::cmp::min(knowledge_base[x][y].countStenchSensedNearby+1,0);
+            knowledge_base[x][y].countGlitterSensedNearby =
+                std::cmp::min(knowledge_base[x][y].countGlitterSensedNearby + 1, 0);
+            knowledge_base[x][y].countBreezeSensedNearby =
+                std::cmp::min(knowledge_base[x][y].countBreezeSensedNearby + 1, 0);
+            knowledge_base[x][y].countStenchSensedNearby =
+                std::cmp::min(knowledge_base[x][y].countStenchSensedNearby + 1, 0);
         }
     }
 }
@@ -150,18 +165,16 @@ fn predicate_throw_arrow(
         return false;
     }
 
-
     if knowledge_base[x as usize][y as usize].countStenchSensedNearby >= 2
         && knowledge_base[x as usize][y as usize].countBreezeSensedNearby < 2
         && *num_of_arrows > 0
     {
         *num_of_arrows -= 1;
 
-        remove_stench_from_knowledge_base_at(x-1, y, knowledge_base);
-        remove_stench_from_knowledge_base_at(x+1, y, knowledge_base);
-        remove_stench_from_knowledge_base_at(x, y-1, knowledge_base);
-        remove_stench_from_knowledge_base_at(x, y+1, knowledge_base);
-
+        remove_stench_from_knowledge_base_at(x - 1, y, knowledge_base);
+        remove_stench_from_knowledge_base_at(x + 1, y, knowledge_base);
+        remove_stench_from_knowledge_base_at(x, y - 1, knowledge_base);
+        remove_stench_from_knowledge_base_at(x, y + 1, knowledge_base);
 
         return true;
     }
@@ -339,7 +352,6 @@ pub fn get_next_move(
     knowledge_base: &mut Vec<Vec<CellKnowledge>>,
     num_of_arrows: &mut u32,
 ) -> (i32, i32) {
-
     // BFS Path file is being emptied. Because the API Endpoint can only know of a BFS path by inspecting the file (since we can't return the path vector from the make_move() function which returns a tuple(x,y)) So we save the BFS path in a file in case a loop is detected. And in the following code, we clear the file.
     let temp: Vec<(usize, usize)> = Vec::new();
     let _ = save_bfs_path_to_file(temp, &String::from("bfs_path.txt"));
@@ -392,8 +404,7 @@ pub fn get_next_move(
         } else if backtrack(x - 1, y, knowledge_base) {
             return (x - 1, y);
         };
-    } 
-    else {
+    } else {
         print!("START MAKING LOOP PATH");
 
         let mut frontier_cells = find_frontier_cells(&knowledge_base);
@@ -413,7 +424,6 @@ pub fn get_next_move(
             }
         }
     }
-    
 
     print!("CONTROL REACHED HERE! BUGGGG-----");
     let probably_dangerous_paths = exclude_death_paths(x, y, knowledge_base);
