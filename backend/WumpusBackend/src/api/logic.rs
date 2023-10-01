@@ -1,3 +1,4 @@
+use rand::seq::SliceRandom;
 use serde::{Deserialize, Serialize};
 
 use crate::api::loop_detection::detect_loop;
@@ -321,6 +322,8 @@ pub fn get_next_move(
     knowledge_base: &mut Vec<Vec<CellKnowledge>>,
     num_of_arrows: &mut u32,
 ) -> (i32, i32) {
+
+    // BFS Path file is being emptied. Because the API Endpoint can only know of a BFS path by inspecting the file (since we can't return the path vector from the make_move() function which returns a tuple(x,y)) So we save the BFS path in a file in case a loop is detected. And in the following code, we clear the file.
     let temp: Vec<(usize, usize)> = Vec::new();
     let _ = save_bfs_path_to_file(temp, &String::from("bfs_path.txt"));
 
@@ -372,8 +375,11 @@ pub fn get_next_move(
         } else if backtrack(x - 1, y, knowledge_base) {
             return (x - 1, y);
         };
-    } else {
-        let frontier_cells = find_frontier_cells(&knowledge_base);
+    } 
+    else {
+        let mut frontier_cells = find_frontier_cells(&knowledge_base);
+        let mut rng = rand::thread_rng();
+        frontier_cells.shuffle(&mut rng);
 
         if let Some(target) = find_least_dangerous_location(&frontier_cells, &knowledge_base) {
             if let Some(path) =
@@ -388,7 +394,9 @@ pub fn get_next_move(
             }
         }
     }
+    
 
+    print!("CONTROL REACHED HERE! BUGGGG-----");
     let probably_dangerous_paths = exclude_death_paths(x, y, knowledge_base);
     if probably_dangerous_paths.len() != 0 {
         return (
