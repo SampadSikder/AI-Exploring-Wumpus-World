@@ -350,3 +350,11 @@ function initialize_knowledge_base(){
   });
 
 }
+async function simulateTheWholeThing(){
+    let moves = 0;
+    while(moves<100){
+        await makeYourMoveAI();
+        await sleep(1000);
+        moves+=1;
+    }
+}
