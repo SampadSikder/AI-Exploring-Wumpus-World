@@ -219,7 +219,7 @@ fn find_frontier_cells(knowledge_base: &Vec<Vec<CellKnowledge>>) -> Vec<(usize, 
         for j in 0..knowledge_base[i].len() {
             let cell = &knowledge_base[i][j];
 
-            if !cell.visited {
+            if cell.visited {
                 let mut has_unexplored_neighbor = false;
                 for &(dx, dy) in &directions {
                     let x = i as i32 + dx;

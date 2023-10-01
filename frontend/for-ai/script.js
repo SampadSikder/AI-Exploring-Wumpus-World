@@ -197,10 +197,11 @@ function makeYourMoveAI() {
 
             exploredWorld[agent_position.x][agent_position.y] = EXPLORED_CELL;
             if (reply.path.length != 0) {
+                document.getElementById("event-logs").value += "Loop detected" + "\n";
                 let i = 0;
                 let previousValue;
                 const moveInterval = setInterval(function () {
-                    if (i < reply.path.length) {
+                    if (i < reply.path.length - 1) {
                         const newX = reply.path[i][0];
                         const newY = reply.path[i][1];
 
@@ -210,21 +211,11 @@ function makeYourMoveAI() {
                         exploredWorld[newX][newY] = AGENT;
 
                         // Restore the previous cell to its original value
-
-                        if (i > 0 && i != reply.path.length - 1) {
+                        if (i > 0) {
                             const prevX = reply.path[i - 1][0];
                             const prevY = reply.path[i - 1][1];
                             exploredWorld[prevX][prevY] = previousValue;
-                        } else {
-                            const prevX = reply.path[reply.path.length - 1][0];
-                            const prevY = reply.path[reply.path.length - 1][1];
-                            exploredWorld[prevX][prevY] = NORMAL_CELL;
                         }
-
-
-
-
-
                         console.log("Reply path is: " + newX + " " + newY);
                         drawExploredWorld();
                         i++;
@@ -257,9 +248,8 @@ function makeYourMoveAI() {
                 message = "You have dropped into PIT! GAME OVER.";
                 //wumpusWorld[agent_position.x][agent_position.y] = NORMAL_CELL;
             }
-
             document.getElementById("game-message").innerText = "Message: " + message;
-
+            document.getElementById("event-logs").value += message + "\n";
             drawExploredWorld();
         })
         .catch((error) => {
