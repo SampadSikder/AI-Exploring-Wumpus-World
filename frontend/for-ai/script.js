@@ -239,8 +239,8 @@ async function makeYourMoveAI() {
                 //wumpusWorld[agent_position.x][agent_position.y] = NORMAL_CELL;
             }
 
-            if (message != "") {
-                document.getElementById("game-message").innerText = "Normal Cell" + " cell number: " + agent_position.x + " " + agent_position.y + "\n";
+            if (message == "") {
+                document.getElementById("event-logs").value += "Normal cell " + " cell number: " + agent_position.x + " " + agent_position.y + "\n";
             }
             else {
                 document.getElementById("event-logs").value += message + " cell number: " + agent_position.x + " " + agent_position.y + "\n";
