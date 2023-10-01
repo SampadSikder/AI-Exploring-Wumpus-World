@@ -56,6 +56,13 @@ pub fn initialize_knowledge_base(knowledge_base: &mut Vec<Vec<CellKnowledge>>) {
     }
 }
 
+fn remove_stench_from_knowledge_base_at(x: usize, y: usize, knowledge_base: &mut Vec<Vec<CellKnowledge>>) {
+    if x<0 || y<0 || x as i32 >= WUMPUS_WORLD_SIZE || y as i32 >= WUMPUS_WORLD_SIZE {return;}
+
+    knowledge_base[x][y].countStenchSensedNearby-=1;
+    if knowledge_base[x][y].countStenchSensedNearby==0 {knowledge_base[x][y].wumpus=false;}
+}
+
 fn update_knowledge_base(
     x: i32,
     y: i32,
@@ -146,6 +153,13 @@ fn predicate_throw_arrow(
         && *num_of_arrows > 0
     {
         *num_of_arrows -= 1;
+
+        remove_stench_from_knowledge_base_at(x-1, y, knowledge_base);
+        remove_stench_from_knowledge_base_at(x+1, y, knowledge_base);
+        remove_stench_from_knowledge_base_at(x, y-1, knowledge_base);
+        remove_stench_from_knowledge_base_at(x, y+1, knowledge_base);
+
+
         return true;
     }
     return false;
