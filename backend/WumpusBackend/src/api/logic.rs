@@ -27,6 +27,7 @@ pub struct CellKnowledge {
     countGlitterSensedNearby: u64,
 
     visited: bool,
+    visitedCount: u32
 }
 
 impl CellKnowledge {
@@ -43,6 +44,7 @@ impl CellKnowledge {
             countGlitterSensedNearby: 0,
 
             visited: false,
+            visitedCount: 0
         }
     }
 }
@@ -230,7 +232,8 @@ fn find_least_dangerous_location(
         let danger_level = (knowledge_base[i][j].countBreezeSensedNearby
             * knowledge_base[i][j].countBreezeSensedNearby)
             + (knowledge_base[i][j].countStenchSensedNearby
-                * knowledge_base[i][j].countStenchSensedNearby);
+                * knowledge_base[i][j].countStenchSensedNearby) +  knowledge_base[i][j].visitedCount as u64;
+                ;
 
         if danger_level < min_danger {
             min_danger = danger_level;
@@ -357,6 +360,7 @@ pub fn get_next_move(
     let _ = save_bfs_path_to_file(temp, &String::from("bfs_path.txt"));
 
     knowledge_base[x as usize][y as usize].visited = true;
+    knowledge_base[x as usize][y as usize].visitedCount += 1;
 
     if !detect_loop() {
         update_knowledge_base(x - 1, y, &perceived, knowledge_base);
@@ -412,6 +416,20 @@ pub fn get_next_move(
         frontier_cells.shuffle(&mut rng);
 
         if let Some(target) = find_least_dangerous_location(&frontier_cells, &knowledge_base) {
+
+            if knowledge_base[target.0][target.1].visitedCount > 10 {
+                frontier_cells.shuffle(&mut rng);
+                match frontier_cells.last() {
+                    Some(last_element) => {
+                        print!("!!!GIVING RANDOM MOVEEE");
+                        return (last_element.0 as i32, last_element.1 as i32);
+                    }
+                    None => {
+                        println!("The vector is empty.");
+                    }
+                }
+            }
+
             if let Some(path) =
                 find_shortest_path_bfs(x as usize, y as usize, target, &knowledge_base)
             {
