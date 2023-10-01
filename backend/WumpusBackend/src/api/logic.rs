@@ -415,14 +415,14 @@ pub fn get_next_move(
         let mut rng = rand::thread_rng();
         frontier_cells.shuffle(&mut rng);
 
-        if let Some(target) = find_least_dangerous_location(&frontier_cells, &knowledge_base) {
+        if let Some(mut target) = find_least_dangerous_location(&frontier_cells, &knowledge_base) {
 
             if knowledge_base[target.0][target.1].visitedCount > 10 {
                 frontier_cells.shuffle(&mut rng);
                 match frontier_cells.last() {
                     Some(last_element) => {
                         print!("!!!GIVING RANDOM MOVEEE");
-                        return (last_element.0 as i32, last_element.1 as i32);
+                        target = *last_element;
                     }
                     None => {
                         println!("The vector is empty.");
