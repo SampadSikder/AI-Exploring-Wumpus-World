@@ -377,6 +377,8 @@ pub fn get_next_move(
         };
     } 
     else {
+        print!("START MAKING LOOP PATH");
+
         let mut frontier_cells = find_frontier_cells(&knowledge_base);
         let mut rng = rand::thread_rng();
         frontier_cells.shuffle(&mut rng);

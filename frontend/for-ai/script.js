@@ -253,11 +253,11 @@ function handleNearbyCells(i, j, OBJECT) {
     return false;
 }
 
-function getPerceptAt(x, y) {
-    if (x < 0 || y < 0 || x >= wumpusWorld.length || y >= wumpusWorld.length) return null;
+function getPerceptAt(a, b) {
+    if (a < 0 || b < 0 || a >= wumpusWorld.length || b >= wumpusWorld.length) return null;
 
-    if (wumpusWorld[x][y] == PIT) return PIT.effect;
-    if (wumpusWorld[x][y] == WUMPUS) return WUMPUS.effect;
+    if (wumpusWorld[a][b] == PIT) return PIT.effect;
+    if (wumpusWorld[a][b] == WUMPUS) return WUMPUS.effect;
     //if(wumpusWorld[x][y]==GOLD) return GOLD.effect;
     return null;
 }
