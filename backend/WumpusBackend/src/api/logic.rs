@@ -9,7 +9,7 @@ const BREEZE: char = 'b';
 const STENCH: char = 's';
 const GLITTER: char = 'g';
 
-const WUMPUS_WORLD_SIZE: i32 = 10;
+const WUMPUS_WORLD_SIZE: i32 = 4;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CellKnowledge {
@@ -265,6 +265,15 @@ fn find_shortest_path_bfs(
 ) -> Option<Vec<(usize, usize)>> {
     let mut queue = VecDeque::new();
     let mut visited = vec![vec![false; knowledge_base[0].len()]; knowledge_base.len()];
+
+    for i in 0..knowledge_base.len() {
+        for j in 0..knowledge_base[i].len() {
+            if (knowledge_base[i][j].visited == false) {
+                visited[knowledge_base[i][j].x][knowledge_base[i][j].y] = true;
+            }
+        }
+    }
+
     let mut parent = vec![vec![(0, 0); knowledge_base[0].len()]; knowledge_base.len()];
 
     queue.push_back((x, y));
@@ -378,8 +387,6 @@ pub fn get_next_move(
                 return (*next_x as i32, *next_y as i32);
             }
         }
-
-        // Handle loop detection as needed
     }
 
     let probably_dangerous_paths = exclude_death_paths(x, y, knowledge_base);
@@ -390,14 +397,14 @@ pub fn get_next_move(
         );
     };
     // Simply Backtrack == BAD. TODO
-    if backtrack(x, y + 1, knowledge_base) {
-        return (x, y + 1);
-    } else if backtrack(x, y - 1, knowledge_base) {
-        return (x, y - 1);
-    } else if backtrack(x + 1, y, knowledge_base) {
-        return (x + 1, y);
-    } else if backtrack(x - 1, y, knowledge_base) {
-        return (x - 1, y);
-    };
+    // if backtrack(x, y + 1, knowledge_base) {
+    //     return (x, y + 1);
+    // } else if backtrack(x, y - 1, knowledge_base) {
+    //     return (x, y - 1);
+    // } else if backtrack(x + 1, y, knowledge_base) {
+    //     return (x + 1, y);
+    // } else if backtrack(x - 1, y, knowledge_base) {
+    //     return (x - 1, y);
+    // };
     return (1, 1);
 }

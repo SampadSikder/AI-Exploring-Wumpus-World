@@ -50,7 +50,7 @@ const AGENT = {
 let wumpusWorld = [];
 let exploredWorld = [];
 let agent_position = { "x": 0, "y": 0 };
-const WUMPUS_WORLD_SIZE = 10;
+const WUMPUS_WORLD_SIZE = 4;
 let arrows = 1;
 
 
@@ -79,7 +79,7 @@ function generate_world() {
     }
 
     // Generating World
-    for (let i = WUMPUS_WORLD_SIZE - 1; i > 0; i--) {
+    /*for (let i = WUMPUS_WORLD_SIZE - 1; i > 0; i--) {
         for (let j = WUMPUS_WORLD_SIZE - 1; j > 0; j--) {
             const randomValue = Math.random();
             if (randomValue < 0.1 && entity_count.gold <= ENTITY_COUNT.gold) {
@@ -95,15 +95,15 @@ function generate_world() {
                 wumpusWorld[i][j] = NORMAL_CELL;
             }
         }
-    }
+    }*/
 
-    /*const STATIC_WORLD = [
+    const STATIC_WORLD = [
         [AGENT, NORMAL_CELL, PIT, NORMAL_CELL],
         [NORMAL_CELL, NORMAL_CELL,NORMAL_CELL, NORMAL_CELL],
         [WUMPUS, GOLD, PIT, NORMAL_CELL],
         [NORMAL_CELL, NORMAL_CELL, NORMAL_CELL, PIT]
     ];
-    wumpusWorld = STATIC_WORLD;*/
+    wumpusWorld = STATIC_WORLD;
 
     exploredWorld = JSON.parse(JSON.stringify(wumpusWorld));
 
@@ -167,7 +167,7 @@ function drawExploredWorld() {
 }
 
 
-function makeYourMoveAI() {
+async function makeYourMoveAI() {
     console.log("Wait for move");
     console.log({
         x: agent_position.x,
@@ -190,45 +190,27 @@ function makeYourMoveAI() {
         }),
     })
         .then((response) => response.json())
-        .then((reply) => {
+        .then(async (reply) => {
             console.log("AI has replied!");
             console.log(reply);
 
 
             exploredWorld[agent_position.x][agent_position.y] = EXPLORED_CELL;
-            if (reply.path.length != 0) {
+
+            if (reply.path.length != 0) { // Handle Loop
                 document.getElementById("event-logs").value += "Loop detected" + "\n";
-                let i = 0;
-                let previousValue;
-                const moveInterval = setInterval(function () {
-                    if (i < reply.path.length - 1) {
-                        const newX = reply.path[i][0];
-                        const newY = reply.path[i][1];
+                
+                for(let i=0; i<reply.path.length; i++){
+                    agent_position.x = reply.path[i][0];
+                    agent_position.y = reply.path[i][1];
+                    exploredWorld[agent_position.x][agent_position.y] = AGENT;
 
-                        agent_position.x = newX;
-                        agent_position.y = newY;
-                        previousValue = exploredWorld[newX][newY];
-                        exploredWorld[newX][newY] = AGENT;
-
-                        // Restore the previous cell to its original value
-                        if (i > 0) {
-                            const prevX = reply.path[i - 1][0];
-                            const prevY = reply.path[i - 1][1];
-                            exploredWorld[prevX][prevY] = previousValue;
-                        }
-                        console.log("Reply path is: " + newX + " " + newY);
-                        drawExploredWorld();
-                        i++;
-                    } else {
-                        clearInterval(moveInterval); // Stop the animation loop
-                    }
-                }, 2000); // 2 second delay between moves
-                // agent_position.x = reply.path[reply.path.length - 1][0];
-                // agent_position.y = reply.path[reply.path.length - 1][1];
-                // console.log(`PATH SIMULATIONN:`);
-                // console.log(agent_position);
+                    drawExploredWorld();
+                    await sleep(1000);
+                    exploredWorld[agent_position.x][agent_position.y] = EXPLORED_CELL;
+                }
             }
-            else {
+            else { // Handle Normal Move
                 agent_position.x = reply.x;
                 agent_position.y = reply.y;
             }
@@ -341,4 +323,28 @@ function drawOriginalWorld() {
             gridElement.appendChild(squareElement);
         }
     }
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+
+function initialize_knowledge_base(){
+    fetch("http://localhost:8080")
+  .then(response => {
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+    return response.text(); // You can use .text() or other methods based on your response type
+  })
+  .then(data => {
+    // Handle the data here
+    console.log(data);
+  })
+  .catch(error => {
+    // Handle errors here
+    console.error('Fetch error:', error);
+  });
+
 }
