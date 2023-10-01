@@ -9,6 +9,7 @@ use super::save_kb::save_bfs_path_to_file;
 const BREEZE: char = 'b';
 const STENCH: char = 's';
 const GLITTER: char = 'g';
+const NORMAL: char = 'n';
 
 const WUMPUS_WORLD_SIZE: i32 = 4;
 
@@ -56,11 +57,11 @@ pub fn initialize_knowledge_base(knowledge_base: &mut Vec<Vec<CellKnowledge>>) {
     }
 }
 
-fn remove_stench_from_knowledge_base_at(x: usize, y: usize, knowledge_base: &mut Vec<Vec<CellKnowledge>>) {
+fn remove_stench_from_knowledge_base_at(x: i32, y: i32, knowledge_base: &mut Vec<Vec<CellKnowledge>>) {
     if x<0 || y<0 || x as i32 >= WUMPUS_WORLD_SIZE || y as i32 >= WUMPUS_WORLD_SIZE {return;}
 
-    knowledge_base[x][y].countStenchSensedNearby-=1;
-    if knowledge_base[x][y].countStenchSensedNearby==0 {knowledge_base[x][y].wumpus=false;}
+    if knowledge_base[x as usize][y as usize].countStenchSensedNearby!=0 {knowledge_base[x as usize][y as usize].countStenchSensedNearby-=1;}
+    else {knowledge_base[x as usize][y as usize].wumpus=false;}
 }
 
 fn update_knowledge_base(
@@ -82,11 +83,15 @@ fn update_knowledge_base(
         knowledge_base[x][y].gold &= perceived == GLITTER;
 
         if perceived == BREEZE {
-            knowledge_base[x][y].countBreezeSensedNearby += 1
+            knowledge_base[x][y].countBreezeSensedNearby = std::cmp::max(knowledge_base[x][y].countBreezeSensedNearby+1,3);
         } else if perceived == STENCH {
-            knowledge_base[x][y].countStenchSensedNearby += 1
+            knowledge_base[x][y].countStenchSensedNearby = std::cmp::max(knowledge_base[x][y].countStenchSensedNearby+1,3);
         } else if perceived == GLITTER {
-            knowledge_base[x][y].countGlitterSensedNearby += 1
+            knowledge_base[x][y].countGlitterSensedNearby = std::cmp::max(knowledge_base[x][y].countGlitterSensedNearby+1,3);
+        } else if perceived == NORMAL {
+            knowledge_base[x][y].countGlitterSensedNearby = std::cmp::min(knowledge_base[x][y].countGlitterSensedNearby+1,0);
+            knowledge_base[x][y].countBreezeSensedNearby = std::cmp::min(knowledge_base[x][y].countBreezeSensedNearby+1,0);
+            knowledge_base[x][y].countStenchSensedNearby = std::cmp::min(knowledge_base[x][y].countStenchSensedNearby+1,0);
         }
     }
 }
@@ -145,11 +150,9 @@ fn predicate_throw_arrow(
         return false;
     }
 
-    let x: usize = x as usize;
-    let y: usize = y as usize;
 
-    if knowledge_base[x][y].countStenchSensedNearby >= 2
-        && knowledge_base[x][y].countBreezeSensedNearby < 2
+    if knowledge_base[x as usize][y as usize].countStenchSensedNearby >= 2
+        && knowledge_base[x as usize][y as usize].countBreezeSensedNearby < 2
         && *num_of_arrows > 0
     {
         *num_of_arrows -= 1;

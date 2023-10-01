@@ -1,2 +1,2 @@
-- [ ] Update backend after wumpus is killed.
+- [X] Update backend after wumpus is killed.
 - [ ] breezeSensedCount > 3
