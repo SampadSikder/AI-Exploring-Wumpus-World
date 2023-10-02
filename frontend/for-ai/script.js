@@ -51,7 +51,7 @@ let wumpusWorld = [];
 let exploredWorld = [];
 let agent_position = { "x": 0, "y": 0 };
 const WUMPUS_WORLD_SIZE = 10;
-let arrows = 1;
+let arrows = 5;
 
 
 const ENTITY_COUNT = {
@@ -79,7 +79,7 @@ function generate_world() {
     }
 
     // Generating World
-    for (let i = WUMPUS_WORLD_SIZE - 1; i > 0; i--) {
+    /*for (let i = WUMPUS_WORLD_SIZE - 1; i > 0; i--) {
         for (let j = WUMPUS_WORLD_SIZE - 1; j > 0; j--) {
             const randomValue = Math.random();
             if (randomValue < 0.1 && entity_count.gold <= ENTITY_COUNT.gold) {
@@ -95,7 +95,48 @@ function generate_world() {
                 wumpusWorld[i][j] = NORMAL_CELL;
             }
         }
-    }
+    }*/
+
+    /*const STATIC_WORLD = Array.from({ length: WUMPUS_WORLD_SIZE }, () =>
+    Array.from({ length: WUMPUS_WORLD_SIZE }, () => NORMAL_CELL)
+    );
+
+    // Place the agent, gold, pits, and Wumpus at specific positions
+    STATIC_WORLD[0][0] = AGENT;
+    STATIC_WORLD[5][1] = PIT;
+    STATIC_WORLD[6][4] = WUMPUS;
+    STATIC_WORLD[7][7] = GOLD;*/
+
+
+    const STATIC_WORLD = Array.from({ length: WUMPUS_WORLD_SIZE }, () =>
+    Array.from({ length: WUMPUS_WORLD_SIZE }, () => NORMAL_CELL)
+    );
+
+    // Place the agent, gold, pits, and Wumpus at specific positions
+    STATIC_WORLD[0][0] = AGENT;
+    STATIC_WORLD[9][9] = GOLD;
+    STATIC_WORLD[2][3] = GOLD;
+    STATIC_WORLD[9][1] = GOLD;
+    STATIC_WORLD[4][7] = GOLD;
+
+
+    // Place 7 pits
+    STATIC_WORLD[0][9] = PIT;
+    STATIC_WORLD[6][5] = PIT;
+    STATIC_WORLD[3][7] = PIT;
+    STATIC_WORLD[4][4] = PIT;
+    STATIC_WORLD[6][0] = PIT;
+
+    // Place 3 Wumpus creatures
+    STATIC_WORLD[7][7] = WUMPUS;
+    STATIC_WORLD[2][5] = WUMPUS;
+    STATIC_WORLD[3][2] = WUMPUS;
+    STATIC_WORLD[3][5] = WUMPUS;
+    STATIC_WORLD[8][6] = WUMPUS;
+
+    console.log(STATIC_WORLD);
+
+
 
     // const STATIC_WORLD = [
     //     [AGENT, NORMAL_CELL, PIT, NORMAL_CELL],
@@ -103,7 +144,7 @@ function generate_world() {
     //     [WUMPUS, GOLD, PIT, NORMAL_CELL],
     //     [NORMAL_CELL, NORMAL_CELL, NORMAL_CELL, PIT]
     // ];
-    // wumpusWorld = STATIC_WORLD;
+    wumpusWorld = STATIC_WORLD;
 
     exploredWorld = JSON.parse(JSON.stringify(wumpusWorld));
 
@@ -213,7 +254,7 @@ async function makeYourMoveAI() {
                     exploredWorld[agent_position.x][agent_position.y] = AGENT;
 
                     drawExploredWorld();
-                    await sleep(1000);
+                    await sleep(100);
                     exploredWorld[agent_position.x][agent_position.y] = EXPLORED_CELL;
                 }
                 document.getElementById("moveBtn").disabled = false;
@@ -240,7 +281,7 @@ async function makeYourMoveAI() {
             }
 
             if (message == "") {
-                document.getElementById("event-logs").value += "Normal cell " + " cell number: " + agent_position.x + " " + agent_position.y + "\n";
+                //document.getElementById("event-logs").value += "Normal cell " + " cell number: " + agent_position.x + " " + agent_position.y + "\n";
             }
             else {
                 document.getElementById("event-logs").value += message + " cell number: " + agent_position.x + " " + agent_position.y + "\n";
@@ -365,9 +406,9 @@ function initialize_knowledge_base() {
 }
 async function simulateTheWholeThing() {
     let moves = 0;
-    while (moves < 100) {
+    while (moves < 2000) {
         await makeYourMoveAI();
-        await sleep(1000);
+        await sleep(100);
         moves += 1;
     }
 }

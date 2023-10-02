@@ -88,6 +88,8 @@ fn update_knowledge_base(
     let x: usize = x as usize;
     let y: usize = y as usize;
 
+    if knowledge_base[x][y].visited {return;} // NEW ADDITION
+
     for &perceived in perceived_arr {
         knowledge_base[x][y].pit &= perceived == BREEZE;
         knowledge_base[x][y].wumpus &= perceived == STENCH;
